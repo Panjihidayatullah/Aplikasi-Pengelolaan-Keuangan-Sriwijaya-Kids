@@ -1,13 +1,14 @@
+<<<<<<< HEAD
 # 🎓 Sistem Pengelolaan Keuangan Sekolah Kids Sriwijaya
 
-![Laravel](https://img.shields.io/badge/Laravel-11.x-FF2D20?style=for-the-badge&logo=laravel)
-![PHP](https://img.shields.io/badge/PHP-8.2+-777BB4?style=for-the-badge&logo=php)
-![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?style=for-the-badge&logo=mysql)
-![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3-7952B3?style=for-the-badge&logo=bootstrap)
+![Laravel](https://img.shields.io/badge/Laravel-12.x-FF2D20?style=for-the-badge&logo=laravel)
+![PHP](https://img.shields.io/badge/PHP-8.3+-777BB4?style=for-the-badge&logo=php)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-4169E1?style=for-the-badge&logo=postgresql)
+![Tailwind](https://img.shields.io/badge/Tailwind-3.4-06B6D4?style=for-the-badge&logo=tailwindcss)
 
 ## 📖 Deskripsi
 
-Sistem Pengelolaan Keuangan Sekolah Kids Sriwijaya adalah aplikasi web berbasis Laravel yang dirancang khusus untuk mengelola aspek keuangan sekolah secara efisien, transparan, dan profesional. Aplikasi ini menyediakan fitur lengkap untuk pengelolaan data siswa, pembayaran SPP dan biaya sekolah lainnya, pencatatan pengeluaran, manajemen aset, serta laporan keuangan yang komprehensif.
+Aplikasi Pengelolaan Keuangan berbasis website yang dibangun untuk Homeschooling Sriwijaya Kids. Sistem ini dibangun menggunakan Laravel dan PostgreSQL untuk membantu pencatatan pemasukan, pengeluaran, serta laporan keuangan secara terstruktur, efisien, dan mudah diakses. Aplikasi ini dirancang khusus untuk mengelola aspek keuangan sekolah secara efisien, transparan, dan profesional dengan fitur lengkap untuk pengelolaan data siswa, pembayaran SPP dan biaya sekolah lainnya, pencatatan pengeluaran, manajemen aset, serta laporan keuangan yang komprehensif.
 
 Sistem ini dibangun dengan arsitektur **clean code**, mengikuti **best practices Laravel**, dan menggunakan **Service Layer Pattern** untuk memisahkan business logic dari controller, sehingga mudah di-maintain dan di-scale.
 
@@ -221,19 +222,19 @@ Menggunakan **Spatie Laravel Permission** dengan 3 role utama:
 ## 🛠️ Technology Stack
 
 ### Backend
-- **Framework:** Laravel 11.x
-- **Language:** PHP 8.2+
-- **Database:** MySQL 8.0
+- **Framework:** Laravel 12.x
+- **Language:** PHP 8.3+
+- **Database:** PostgreSQL 17
 - **Authentication:** Laravel Breeze
 - **Authorization:** Spatie Laravel Permission
 
 ### Frontend
-- **CSS Framework:** Bootstrap 5.3
-- **JavaScript:** Vanilla JS + jQuery
+- **CSS Framework:** Tailwind CSS 3.4
+- **JavaScript:** React + TypeScript (Inertia.js)
 - **Charts:** Chart.js 4.x
-- **Tables:** DataTables
-- **Icons:** Font Awesome 6
-- **Notifications:** SweetAlert2
+- **UI Components:** shadcn/ui
+- **Icons:** Heroicons / Lucide
+- **Notifications:** Toast notifications
 
 ### Libraries & Packages
 - **maatwebsite/excel** - Excel export/import
@@ -253,11 +254,11 @@ Menggunakan **Spatie Laravel Permission** dengan 3 role utama:
 ## 📋 Persyaratan Sistem
 
 ### Minimum Requirements
-- PHP >= 8.2
-- MySQL >= 8.0 atau MariaDB >= 10.3
+- PHP >= 8.3
+- PostgreSQL >= 17 (atau database lokal)
 - Composer 2.x
-- Node.js >= 18.x (untuk development)
-- Web Server (Apache/Nginx)
+- Node.js >= 20.x (untuk development)
+- Web Server (Apache/Nginx atau Laravel built-in server)
 
 ### Recommended (Development)
 - XAMPP atau Laragon (Windows)
@@ -305,17 +306,17 @@ cp .env.example .env
 ### 4. Konfigurasi Database
 Edit file `.env` dan sesuaikan:
 ```env
-DB_CONNECTION=mysql
+DB_CONNECTION=pgsql
 DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=sriwijaya_kids_finance
-DB_USERNAME=root
-DB_PASSWORD=
+DB_PORT=5432
+DB_DATABASE=sriwijaya_kidss_local
+DB_USERNAME=postgres
+DB_PASSWORD=your_password
 ```
 
-**Buat database di MySQL:**
+**Buat database di PostgreSQL:**
 ```sql
-CREATE DATABASE sriwijaya_kids_finance;
+CREATE DATABASE sriwijaya_kidss_local;
 ```
 
 ### 5. Generate Application Key
