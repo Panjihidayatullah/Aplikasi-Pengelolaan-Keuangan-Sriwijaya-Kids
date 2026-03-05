@@ -1,0 +1,3 @@
+{{-- Blade Component Example --}}
+{{-- This directory is for reusable Blade components --}}
+{{-- Use: php artisan make:component ComponentName --}}
