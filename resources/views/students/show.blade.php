@@ -84,6 +84,10 @@
                         <dt class="text-sm font-medium text-gray-500">Email</dt>
                         <dd class="mt-1 text-sm text-gray-900">{{ $siswa->email ?? '-' }}</dd>
                     </div>
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Akun Login</dt>
+                        <dd class="mt-1 text-sm text-gray-900">{{ $siswa->user ? 'Tersedia (' . $siswa->user->email . ')' : 'Belum dibuat' }}</dd>
+                    </div>
                 </dl>
             </div>
         </div>

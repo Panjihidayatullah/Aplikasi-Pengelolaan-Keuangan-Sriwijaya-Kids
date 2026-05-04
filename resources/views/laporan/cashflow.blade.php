@@ -12,7 +12,7 @@
             <p class="mt-1 text-sm text-gray-600">Arus kas pemasukan dan pengeluaran</p>
         </div>
         <div class="flex space-x-2">
-            <a href="{{ route('laporan.export.pdf', ['type' => 'cashflow', 'start_date' => request('start_date', now()->startOfMonth()->format('Y-m-d')), 'end_date' => request('end_date', now()->endOfMonth()->format('Y-m-d'))]) }}" 
+                <a href="{{ route('laporan.export.pdf', ['type' => 'cashflow', 'start_date' => request('start_date', now()->startOfMonth()->format('Y-m-d')), 'end_date' => request('end_date', now()->endOfMonth()->format('Y-m-d')), 'group_by' => request('group_by', $groupBy ?? 'day')]) }}" 
                target="_blank"
                class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm inline-flex items-center">
                 <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -20,7 +20,7 @@
                 </svg>
                 Export PDF
             </a>
-            <a href="{{ route('laporan.export.excel', ['type' => 'cashflow', 'start_date' => request('start_date', now()->startOfMonth()->format('Y-m-d')), 'end_date' => request('end_date', now()->endOfMonth()->format('Y-m-d'))]) }}" 
+                <a href="{{ route('laporan.export.excel', ['type' => 'cashflow', 'start_date' => request('start_date', now()->startOfMonth()->format('Y-m-d')), 'end_date' => request('end_date', now()->endOfMonth()->format('Y-m-d')), 'group_by' => request('group_by', $groupBy ?? 'day')]) }}" 
                class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm inline-flex items-center">
                 <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
@@ -32,31 +32,40 @@
 
     <!-- Filter -->
     <div class="bg-white rounded-xl shadow-sm border p-4">
-        <form method="GET" action="{{ route('laporan.cashflow') }}" class="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Tanggal Mulai</label>
-                <input type="date" 
-                       name="start_date" 
-                       value="{{ request('start_date', now()->startOfMonth()->format('Y-m-d')) }}" 
-                       class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
+        <form method="GET" action="{{ route('laporan.cashflow') }}" class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Tanggal Mulai</label>
+                    <input type="date" 
+                           name="start_date" 
+                           value="{{ request('start_date', now()->startOfMonth()->format('Y-m-d')) }}" 
+                           class="w-full px-4 py-2.5 text-sm rounded-lg border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Tanggal Akhir</label>
+                    <input type="date" 
+                           name="end_date" 
+                           value="{{ request('end_date', now()->endOfMonth()->format('Y-m-d')) }}" 
+                           class="w-full px-4 py-2.5 text-sm rounded-lg border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Satuan Chart</label>
+                    <select name="group_by" class="w-full px-4 py-2.5 text-sm rounded-lg border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        <option value="day" @selected(request('group_by', $groupBy ?? 'day') === 'day')>Per Hari</option>
+                        <option value="month" @selected(request('group_by', $groupBy ?? 'day') === 'month')>Per Bulan</option>
+                        <option value="year" @selected(request('group_by', $groupBy ?? 'day') === 'year')>Per Tahun</option>
+                    </select>
+                </div>
             </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Tanggal Akhir</label>
-                <input type="date" 
-                       name="end_date" 
-                       value="{{ request('end_date', now()->endOfMonth()->format('Y-m-d')) }}" 
-                       class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
-            </div>
-            <div class="flex items-end">
-                <button type="submit" class="w-full px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium transition-colors inline-flex items-center justify-center">
+
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-3">
+                <button type="submit" class="w-full sm:w-40 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium transition-colors inline-flex items-center justify-center">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                     </svg>
                     Filter
                 </button>
-            </div>
-            <div class="flex items-end">
-                <a href="{{ route('laporan.cashflow') }}" class="w-full px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 font-medium transition-colors text-center inline-flex items-center justify-center">
+                <a href="{{ route('laporan.cashflow') }}" class="w-full sm:w-40 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 font-medium transition-colors text-center inline-flex items-center justify-center">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
                     </svg>
@@ -90,8 +99,10 @@
                 Pemasukan vs Pengeluaran 
                 @if($groupBy === 'day')
                     (Per Hari)
-                @else
+                @elseif($groupBy === 'month')
                     (Per Bulan)
+                @else
+                    (Per Tahun)
                 @endif
             </p>
         </div>
@@ -186,9 +197,12 @@ document.addEventListener('DOMContentLoaded', function() {
         if (groupBy === 'day') {
             // Format: DD MMM
             return date.toLocaleDateString('id-ID', { day: '2-digit', month: 'short' });
-        } else {
+        } else if (groupBy === 'month') {
             // Format: MMM YYYY
             return date.toLocaleDateString('id-ID', { month: 'short', year: 'numeric' });
+        } else {
+            // Format: YYYY
+            return date.toLocaleDateString('id-ID', { year: 'numeric' });
         }
     });
     

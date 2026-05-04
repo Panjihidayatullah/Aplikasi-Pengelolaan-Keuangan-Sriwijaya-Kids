@@ -26,13 +26,13 @@
                            id="nama_kelas" 
                            value="{{ old('nama_kelas') }}" 
                            required
-                           placeholder="Contoh: 7A, 8B, 9C"
+                           placeholder="Contoh: SD Kelas 1"
                            class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all duration-200 @error('nama_kelas') border-red-500 @enderror">
                     <p class="mt-2 text-xs text-slate-500 flex items-center">
                         <svg class="w-3.5 h-3.5 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
                         </svg>
-                        Format: [Tingkat][Rombel], misal: 7A, 8B, 9C
+                        Gunakan nama kelas yang jelas, misalnya SD Kelas 1.
                     </p>
                     @error('nama_kelas')
                         <p class="mt-2 text-sm text-red-600 flex items-center">
@@ -49,18 +49,23 @@
                     <label for="tingkat" class="block text-sm font-semibold text-slate-700 mb-2">
                         Tingkat <span class="text-red-500">*</span>
                     </label>
-                    <select name="tingkat" 
-                            id="tingkat" 
-                            required
-                            class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all duration-200 bg-white @error('tingkat') border-red-500 @enderror">
-                        <option value="">Pilih Tingkat Kelas</option>
-                        <option value="7" {{ old('tingkat') == 7 ? 'selected' : '' }}>Tingkat 7 (SMP Kelas 1)</option>
-                        <option value="8" {{ old('tingkat') == 8 ? 'selected' : '' }}>Tingkat 8 (SMP Kelas 2)</option>
-                        <option value="9" {{ old('tingkat') == 9 ? 'selected' : '' }}>Tingkat 9 (SMP Kelas 3)</option>
-                        <option value="10" {{ old('tingkat') == 10 ? 'selected' : '' }}>Tingkat 10 (SMA Kelas 1)</option>
-                        <option value="11" {{ old('tingkat') == 11 ? 'selected' : '' }}>Tingkat 11 (SMA Kelas 2)</option>
-                        <option value="12" {{ old('tingkat') == 12 ? 'selected' : '' }}>Tingkat 12 (SMA Kelas 3)</option>
-                    </select>
+                    <input type="number"
+                           name="tingkat"
+                           id="tingkat"
+                           value="{{ old('tingkat') }}"
+                           required
+                           min="1"
+                           max="12"
+                           step="1"
+                           inputmode="numeric"
+                           data-occupied-levels='@json(($occupiedTingkat ?? collect())->values())'
+                           placeholder="Contoh: 1"
+                           class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all duration-200 bg-white @error('tingkat') border-red-500 @enderror">
+                    <p class="mt-2 text-xs text-slate-500">Tingkat harus unik. Jika tingkat sudah dipakai, Anda harus menghapus kelas pada tingkat tersebut terlebih dahulu.</p>
+                    @if(($occupiedTingkat ?? collect())->isNotEmpty())
+                    <p class="mt-1 text-xs text-amber-700">Tingkat terpakai saat ini: {{ ($occupiedTingkat ?? collect())->join(', ') }}</p>
+                    @endif
+                    <p id="tingkat-warning" class="mt-1 text-xs text-red-600 hidden"></p>
                     @error('tingkat')
                         <p class="mt-2 text-sm text-red-600 flex items-center">
                             <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
@@ -91,6 +96,17 @@
                         </p>
                     @enderror
                 </div>
+
+                <!-- Kelas Kelulusan -->
+                <div>
+                    <label class="flex items-center space-x-3 cursor-pointer">
+                        <input type="checkbox" name="is_tingkat_akhir" id="is_tingkat_akhir" value="1" @checked(old('is_tingkat_akhir')) class="w-5 h-5 text-blue-600 border-2 border-slate-300 rounded focus:ring-blue-500 transition-colors duration-200">
+                        <div>
+                            <span class="block text-sm font-semibold text-slate-700">Tandai sebagai Kelas Kelulusan (Tingkat Akhir)</span>
+                            <span class="block text-xs text-slate-500">Centang opsi ini jika siswa di kelas ini diperbolehkan untuk diluluskan.</span>
+                        </div>
+                    </label>
+                </div>
             </div>
 
             <!-- Actions -->
@@ -111,3 +127,40 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const tingkatInput = document.getElementById('tingkat');
+        const warning = document.getElementById('tingkat-warning');
+        if (!tingkatInput) return;
+
+        const occupied = JSON.parse(tingkatInput.dataset.occupiedLevels || '[]')
+            .map((item) => Number(item))
+            .filter((item) => Number.isInteger(item) && item > 0);
+
+        const validateTingkat = () => {
+            const value = Number(tingkatInput.value);
+            const duplicated = Number.isInteger(value) && occupied.includes(value);
+
+            if (duplicated) {
+                tingkatInput.setCustomValidity('Tingkat sudah dipakai kelas lain.');
+                if (warning) {
+                    warning.textContent = `Tingkat ${value} sudah dipakai kelas lain.`;
+                    warning.classList.remove('hidden');
+                }
+            } else {
+                tingkatInput.setCustomValidity('');
+                if (warning) {
+                    warning.textContent = '';
+                    warning.classList.add('hidden');
+                }
+            }
+        };
+
+        tingkatInput.addEventListener('input', validateTingkat);
+        tingkatInput.addEventListener('change', validateTingkat);
+        validateTingkat();
+    });
+</script>
+@endpush

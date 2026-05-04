@@ -24,10 +24,10 @@
                     <select name="jenis_pengeluaran_id" 
                             id="jenis_pengeluaran_id" 
                             required
-                            class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all duration-200 bg-white @error('jenis_pengeluaran_id') border-red-500 @enderror">
+                            class="js-jenis-pengeluaran w-full @error('jenis_pengeluaran_id') is-invalid @enderror">
                         <option value="">Pilih Jenis Pengeluaran</option>
-                        @foreach(\App\Models\JenisPengeluaran::orderBy('nama')->get() as $jenis)
-                            <option value="{{ $jenis->id }}" {{ old('jenis_pengeluaran_id') == $jenis->id ? 'selected' : '' }}>
+                        @foreach($jenisPengeluaran as $jenis)
+                            <option value="{{ $jenis->id }}" data-kategori="{{ $jenis->nama }}" {{ old('jenis_pengeluaran_id') == $jenis->id ? 'selected' : '' }}>
                                 {{ $jenis->nama }}
                             </option>
                         @endforeach
@@ -71,21 +71,24 @@
 
                 <!-- Jumlah -->
                 <div>
-                    <label for="jumlah" class="block text-sm font-semibold text-slate-700 mb-2">
+                    <label for="jumlah_display" class="block text-sm font-semibold text-slate-700 mb-2">
                         Jumlah Pengeluaran <span class="text-red-500">*</span>
                     </label>
                     <div class="relative">
                         <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 font-medium">Rp</span>
-                        <input type="number" 
-                               name="jumlah" 
-                               id="jumlah" 
+                        <input type="hidden"
+                               name="jumlah"
+                               id="jumlah"
                                value="{{ old('jumlah') }}" 
-                               required
-                               min="0"
-                               step="1000"
+                               required>
+                        <input type="text"
+                               id="jumlah_display"
+                               value=""
+                               inputmode="numeric"
                                placeholder="0"
                                class="w-full pl-12 pr-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all duration-200 @error('jumlah') border-red-500 @enderror">
                     </div>
+                    <p class="mt-2 text-xs text-slate-500">Format otomatis: 1.000, 10.000, 100.000, dst.</p>
                     @error('jumlah')
                         <p class="mt-2 text-sm text-red-600 flex items-center">
                             <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
@@ -108,6 +111,29 @@
                            required
                            class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all duration-200 @error('tanggal') border-red-500 @enderror">
                     @error('tanggal')
+                        <p class="mt-2 text-sm text-red-600 flex items-center">
+                            <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                            </svg>
+                            {{ $message }}
+                        </p>
+                    @enderror
+                </div>
+
+                <!-- Status -->
+                <div>
+                    <label for="status" class="block text-sm font-semibold text-slate-700 mb-2">
+                        Status <span class="text-red-500">*</span>
+                    </label>
+                    <select name="status" 
+                            id="status" 
+                            required
+                            class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all duration-200 bg-white @error('status') border-red-500 @enderror">
+                        <option value="Disetujui" {{ old('status', 'Disetujui') == 'Disetujui' ? 'selected' : '' }}>Approved</option>
+                        <option value="Pending" {{ old('status') == 'Pending' ? 'selected' : '' }}>Pending</option>
+                        <option value="Ditolak" {{ old('status') == 'Ditolak' ? 'selected' : '' }}>Rejected</option>
+                    </select>
+                    @error('status')
                         <p class="mt-2 text-sm text-red-600 flex items-center">
                             <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
@@ -164,3 +190,159 @@
     </div>
 </div>
 @endsection
+
+@push('styles')
+<link href="https://cdn.jsdelivr.net/npm/tom-select@2.4.1/dist/css/tom-select.css" rel="stylesheet">
+<style>
+    .ts-wrapper.js-jenis-pengeluaran {
+        width: 100%;
+        border: 0 !important;
+        padding: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        outline: 0 !important;
+    }
+
+    .ts-wrapper.js-jenis-pengeluaran .ts-control {
+        border: 2px solid #e2e8f0;
+        border-radius: 0.75rem;
+        min-height: 54px;
+        padding: 0.75rem 1rem;
+        background: #fff;
+        box-shadow: none;
+    }
+
+    .ts-wrapper.js-jenis-pengeluaran .ts-control.focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+    }
+
+    .ts-wrapper.js-jenis-pengeluaran.is-invalid .ts-control {
+        border-color: #ef4444;
+    }
+
+    .ts-wrapper.js-jenis-pengeluaran .ts-control .item {
+        margin: 0;
+        padding: 0;
+        color: #0f172a;
+        line-height: 1.5;
+        font-size: 1rem;
+    }
+
+    .ts-wrapper.js-jenis-pengeluaran .ts-control input {
+        margin: 0;
+        padding: 0;
+        border: 0 !important;
+        box-shadow: none !important;
+        background: transparent !important;
+        line-height: 1.5;
+        font-size: 1rem;
+    }
+
+    .ts-wrapper.js-jenis-pengeluaran .ts-control .placeholder {
+        font-size: 1rem;
+        color: #64748b;
+    }
+
+    .ts-wrapper.js-jenis-pengeluaran .ts-dropdown {
+        border: 1px solid #cbd5e1;
+        border-radius: 0.75rem;
+        margin-top: 0.35rem;
+        overflow: hidden;
+        box-shadow: 0 10px 20px rgba(15, 23, 42, 0.08);
+    }
+
+    .ts-wrapper.js-jenis-pengeluaran .ts-dropdown .option {
+        padding: 0.65rem 1rem;
+        font-size: 1rem;
+    }
+</style>
+@endpush
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2.4.1/dist/js/tom-select.complete.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const select = document.getElementById('jenis_pengeluaran_id');
+
+        if (select && typeof TomSelect !== 'undefined' && !select.tomselect) {
+            const emptyOption = select.querySelector('option[value=""]');
+            if (emptyOption) {
+                emptyOption.textContent = '';
+            }
+
+            new TomSelect(select, {
+                create: false,
+                allowEmptyOption: true,
+                maxOptions: 300,
+                searchField: ['text'],
+                placeholder: 'Pilih Jenis Pengeluaran',
+                render: {
+                    no_results: function () {
+                        return '<div class="no-results">Tidak ada hasil</div>';
+                    },
+                },
+                onInitialize: function () {
+                    if (this.control_input && !this.getValue()) {
+                        this.control_input.placeholder = 'Pilih Jenis Pengeluaran';
+                    }
+                },
+                onFocus: function () {
+                    if (this.control_input) {
+                        this.control_input.placeholder = '';
+                    }
+                },
+                onDropdownOpen: function () {
+                    if (this.control_input) {
+                        this.control_input.placeholder = '';
+                    }
+                },
+                onBlur: function () {
+                    if (this.control_input && !this.getValue()) {
+                        this.control_input.placeholder = 'Pilih Jenis Pengeluaran';
+                    }
+                },
+            });
+        }
+
+        const jumlahInput = document.getElementById('jumlah');
+        const jumlahDisplayInput = document.getElementById('jumlah_display');
+
+        if (jumlahInput && jumlahDisplayInput) {
+            const formatRibuan = (digits) => digits.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+            const initialRaw = String(jumlahInput.value ?? '').trim();
+            const initialNumeric = Number(initialRaw);
+            const initialDigits = initialRaw === ''
+                ? ''
+                : (Number.isFinite(initialNumeric)
+                    ? String(Math.max(0, Math.floor(initialNumeric)))
+                    : initialRaw.replace(/\D/g, ''));
+
+            jumlahInput.value = initialDigits;
+            jumlahDisplayInput.value = initialDigits ? formatRibuan(initialDigits) : '';
+
+            const syncJumlah = () => {
+                const digits = jumlahDisplayInput.value.replace(/\D/g, '');
+                jumlahInput.value = digits;
+                jumlahDisplayInput.value = digits ? formatRibuan(digits) : '';
+            };
+
+            jumlahDisplayInput.addEventListener('input', syncJumlah);
+            jumlahDisplayInput.addEventListener('blur', syncJumlah);
+            jumlahDisplayInput.addEventListener('focus', function () {
+                if (jumlahDisplayInput.value === '0') {
+                    jumlahDisplayInput.value = '';
+                    jumlahInput.value = '';
+                }
+            });
+
+            if (jumlahDisplayInput.form) {
+                jumlahDisplayInput.form.addEventListener('submit', function () {
+                    jumlahInput.value = jumlahDisplayInput.value.replace(/\D/g, '');
+                });
+            }
+        }
+    });
+</script>
+@endpush

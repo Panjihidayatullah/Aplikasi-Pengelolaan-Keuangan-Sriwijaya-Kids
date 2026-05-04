@@ -74,7 +74,7 @@ if (!function_exists('academic_years')) {
 if (!function_exists('generate_transaction_code')) {
     function generate_transaction_code($prefix = 'TRX')
     {
-        return $prefix . '-' . date('Ymd') . '-' . strtoupp(substr(uniqid(), -6));
+        return $prefix . '-' . date('Ymd') . '-' . strtoupper(substr(uniqid(), -6));
     }
 }
 
@@ -125,5 +125,74 @@ if (!function_exists('has_any_permission')) {
     function has_any_permission($permissions)
     {
         return auth()->check() && auth()->user()->hasAnyPermission($permissions);
+    }
+}
+
+/**
+ * Check if user has specific role
+ */
+if (!function_exists('has_role')) {
+    function has_role($role)
+    {
+        return auth()->check() && auth()->user()->hasRole($role);
+    }
+}
+
+/**
+ * Check if user is Admin
+ */
+if (!function_exists('is_admin')) {
+    function is_admin()
+    {
+        return has_role('Admin');
+    }
+}
+
+/**
+ * Check if user is Bendahara
+ */
+if (!function_exists('is_bendahara')) {
+    function is_bendahara()
+    {
+        return has_role('Bendahara');
+    }
+}
+
+/**
+ * Check if user is Kepala Sekolah
+ */
+if (!function_exists('is_kepala_sekolah')) {
+    function is_kepala_sekolah()
+    {
+        return has_role('Kepala Sekolah');
+    }
+}
+
+/**
+ * Check if user is Siswa
+ */
+if (!function_exists('is_siswa')) {
+    function is_siswa()
+    {
+        if (!auth()->check()) {
+            return false;
+        }
+
+        $user = auth()->user();
+        if ($user->hasRole('Siswa')) {
+            return true;
+        }
+
+        return method_exists($user, 'siswa') && $user->siswa()->exists();
+    }
+}
+
+/**
+ * Check if user can access menu
+ */
+if (!function_exists('can_access')) {
+    function can_access($permission)
+    {
+        return auth()->check() && (auth()->user()->can($permission) || is_admin());
     }
 }

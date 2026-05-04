@@ -15,77 +15,35 @@ class JenisPengeluaranSeeder extends Seeder
     {
         $now = Carbon::now();
 
-        DB::table('jenis_pengeluaran')->insert([
+        $types = [
+            [
+                'nama' => 'Aset',
+                'keterangan' => 'Pengeluaran pembelian aset tahan lama seperti meja, kursi, papan tulis, komputer, dan sejenisnya.',
+            ],
+            [
+                'nama' => 'Operasional',
+                'keterangan' => 'Pengeluaran operasional habis pakai seperti listrik, air, internet, ATK, transport, konsumsi, dan pemeliharaan.',
+            ],
+            [
+                'nama' => 'Gaji Pegawai',
+                'keterangan' => 'Pembayaran gaji pegawai non-guru sekolah seperti satpam, kebersihan, staf administrasi, dan karyawan lainnya.',
+            ],
             [
                 'nama' => 'Gaji Guru',
-                'keterangan' => 'Pembayaran gaji guru dan staff',
-                'is_active' => true,
-                'created_at' => $now,
-                'updated_at' => $now,
+                'keterangan' => 'Pembayaran gaji khusus guru berdasarkan periode bulan dan tahun penggajian.',
             ],
-            [
-                'nama' => 'Listrik',
-                'keterangan' => 'Biaya listrik bulanan',
-                'is_active' => true,
-                'created_at' => $now,
-                'updated_at' => $now,
-            ],
-            [
-                'nama' => 'Air',
-                'keterangan' => 'Biaya air PDAM',
-                'is_active' => true,
-                'created_at' => $now,
-                'updated_at' => $now,
-            ],
-            [
-                'nama' => 'ATK',
-                'keterangan' => 'Alat Tulis Kantor',
-                'is_active' => true,
-                'created_at' => $now,
-                'updated_at' => $now,
-            ],
-            [
-                'nama' => 'Pemeliharaan',
-                'keterangan' => 'Biaya pemeliharaan gedung dan fasilitas',
-                'is_active' => true,
-                'created_at' => $now,
-                'updated_at' => $now,
-            ],
-            [
-                'nama' => 'Transport',
-                'keterangan' => 'Biaya transportasi dan BBM',
-                'is_active' => true,
-                'created_at' => $now,
-                'updated_at' => $now,
-            ],
-            [
-                'nama' => 'Konsumsi',
-                'keterangan' => 'Biaya konsumsi rapat dan acara',
-                'is_active' => true,
-                'created_at' => $now,
-                'updated_at' => $now,
-            ],
-            [
-                'nama' => 'Honor',
-                'keterangan' => 'Honor narasumber dan tamu',
-                'is_active' => true,
-                'created_at' => $now,
-                'updated_at' => $now,
-            ],
-            [
-                'nama' => 'Internet',
-                'keterangan' => 'Biaya internet dan telepon',
-                'is_active' => true,
-                'created_at' => $now,
-                'updated_at' => $now,
-            ],
-            [
-                'nama' => 'Lain-lain',
-                'keterangan' => 'Pengeluaran lain-lain',
-                'is_active' => true,
-                'created_at' => $now,
-                'updated_at' => $now,
-            ],
-        ]);
+        ];
+
+        foreach ($types as $type) {
+            DB::table('jenis_pengeluaran')->updateOrInsert(
+                ['nama' => $type['nama']],
+                [
+                    'keterangan' => $type['keterangan'],
+                    'is_active' => true,
+                    'updated_at' => $now,
+                    'created_at' => $now,
+                ]
+            );
+        }
     }
 }

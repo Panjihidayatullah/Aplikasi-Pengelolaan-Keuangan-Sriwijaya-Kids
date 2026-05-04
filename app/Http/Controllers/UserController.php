@@ -25,7 +25,7 @@ class UserController extends Controller
             });
         }
 
-        $users = $query->latest()->paginate(15);
+        $users = $query->latest()->paginate(10);
 
         return view('users.index', compact('users'));
     }

@@ -7,10 +7,17 @@ use App\Concerns\ProfileValidationRules;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
+use Spatie\Permission\Models\Role;
 
 class CreateNewUser implements CreatesNewUsers
 {
     use PasswordValidationRules, ProfileValidationRules;
+
+    private const REGISTRATION_ROLES = [
+        'Admin',
+        'Bendahara',
+        'Kepala Sekolah',
+    ];
 
     /**
      * Validate and create a newly registered user.
@@ -22,12 +29,20 @@ class CreateNewUser implements CreatesNewUsers
         Validator::make($input, [
             ...$this->profileRules(),
             'password' => $this->passwordRules(),
+            'role' => ['required', 'string', 'in:' . implode(',', self::REGISTRATION_ROLES)],
         ])->validate();
 
-        return User::create([
+        $user = User::create([
             'name' => $input['name'],
             'email' => $input['email'],
             'password' => $input['password'],
+            'role' => $input['role'],
         ]);
+
+        // Assign role using Spatie
+        Role::findOrCreate($input['role']);
+        $user->assignRole($input['role']);
+
+        return $user;
     }
 }

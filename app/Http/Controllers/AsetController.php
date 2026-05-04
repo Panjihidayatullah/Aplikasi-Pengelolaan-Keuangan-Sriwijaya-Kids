@@ -26,12 +26,12 @@ class AsetController extends Controller
 
         // Filter by Kategori
         if ($request->filled('kategori')) {
-            $query->where('kategori', $request->kategori);
+            $query->where('kategori', 'ILIKE', $request->kategori);
         }
 
         // Filter by Kondisi
         if ($request->filled('kondisi')) {
-            $query->where('kondisi', $request->kondisi);
+            $query->where('kondisi', 'ILIKE', $request->kondisi);
         }
 
         // Filter by Tanggal Range
@@ -42,11 +42,20 @@ class AsetController extends Controller
             $query->where('tanggal_perolehan', '<=', $request->tanggal_akhir);
         }
 
+        // Calculate statistics based on current filters (but before pagination)
+        $statsQuery = clone $query;
+        $stats = [
+            'total' => $statsQuery->count(),
+            'baik' => (clone $statsQuery)->where('kondisi', 'ILIKE', 'Baik')->count(),
+            'rusak_ringan' => (clone $statsQuery)->where('kondisi', 'ILIKE', 'Rusak Ringan')->count(),
+            'rusak_berat' => (clone $statsQuery)->where('kondisi', 'ILIKE', 'Rusak Berat')->count(),
+        ];
+
         $aset = $query->orderBy('nama')
-            ->paginate(15)
+            ->paginate(10)
             ->withQueryString();
 
-        return view('aset.index', compact('aset'));
+        return view('aset.index', compact('aset', 'stats'));
     }
 
     /**
@@ -71,6 +80,23 @@ class AsetController extends Controller
             'lokasi' => 'nullable|string|max:200',
             'keterangan' => 'nullable|string',
         ]);
+
+        // Map kondisi & kategori ke format yang konsisten sesuai data yang ada di database
+        $kondisiMap = [
+            'baik' => 'Baik',
+            'rusak ringan' => 'Rusak Ringan',
+            'rusak berat' => 'Rusak Berat'
+        ];
+        $kategoriMap = [
+            'elektronik' => 'Elektronik',
+            'furniture' => 'Furniture',
+            'kendaraan' => 'Kendaraan',
+            'gedung' => 'Bangunan',
+            'lainnya' => 'Lainnya'
+        ];
+        
+        $validated['kondisi'] = $kondisiMap[strtolower($validated['kondisi'])] ?? $validated['kondisi'];
+        $validated['kategori'] = $kategoriMap[strtolower($validated['kategori'])] ?? $validated['kategori'];
 
         Aset::create($validated);
 
@@ -113,6 +139,23 @@ class AsetController extends Controller
             'lokasi' => 'nullable|string|max:200',
             'keterangan' => 'nullable|string',
         ]);
+
+        // Map kondisi & kategori ke format yang konsisten sesuai data yang ada di database
+        $kondisiMap = [
+            'baik' => 'Baik',
+            'rusak ringan' => 'Rusak Ringan',
+            'rusak berat' => 'Rusak Berat'
+        ];
+        $kategoriMap = [
+            'elektronik' => 'Elektronik',
+            'furniture' => 'Furniture',
+            'kendaraan' => 'Kendaraan',
+            'gedung' => 'Bangunan',
+            'lainnya' => 'Lainnya'
+        ];
+        
+        $validated['kondisi'] = $kondisiMap[strtolower($validated['kondisi'])] ?? $validated['kondisi'];
+        $validated['kategori'] = $kategoriMap[strtolower($validated['kategori'])] ?? $validated['kategori'];
 
         $aset->update($validated);
 

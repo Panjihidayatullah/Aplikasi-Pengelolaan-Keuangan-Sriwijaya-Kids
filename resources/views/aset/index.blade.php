@@ -42,11 +42,11 @@
                                 id="kategori" 
                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm">
                             <option value="">Semua Kategori</option>
-                            <option value="elektronik" {{ request('kategori') == 'elektronik' ? 'selected' : '' }}>🖥️ Elektronik</option>
-                            <option value="furniture" {{ request('kategori') == 'furniture' ? 'selected' : '' }}>🪑 Furniture</option>
-                            <option value="kendaraan" {{ request('kategori') == 'kendaraan' ? 'selected' : '' }}>🚗 Kendaraan</option>
-                            <option value="gedung" {{ request('kategori') == 'gedung' ? 'selected' : '' }}>🏢 Gedung</option>
-                            <option value="lainnya" {{ request('kategori') == 'lainnya' ? 'selected' : '' }}>📦 Lainnya</option>
+                            <option value="Elektronik" {{ request('kategori') == 'Elektronik' ? 'selected' : '' }}>Elektronik</option>
+                            <option value="Furniture" {{ request('kategori') == 'Furniture' ? 'selected' : '' }}>Furniture</option>
+                            <option value="Kendaraan" {{ request('kategori') == 'Kendaraan' ? 'selected' : '' }}>Kendaraan</option>
+                            <option value="Bangunan" {{ request('kategori') == 'Bangunan' ? 'selected' : '' }}>Gedung</option>
+                            <option value="Lainnya" {{ request('kategori') == 'Lainnya' ? 'selected' : '' }}>Lainnya</option>
                         </select>
                     </div>
 
@@ -57,9 +57,9 @@
                                 id="kondisi" 
                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm">
                             <option value="">Semua Kondisi</option>
-                            <option value="baik" {{ request('kondisi') == 'baik' ? 'selected' : '' }}>✅ Baik</option>
-                            <option value="rusak ringan" {{ request('kondisi') == 'rusak ringan' ? 'selected' : '' }}>⚠️ Rusak Ringan</option>
-                            <option value="rusak berat" {{ request('kondisi') == 'rusak berat' ? 'selected' : '' }}>❌ Rusak Berat</option>
+                            <option value="Baik" {{ request('kondisi') == 'Baik' ? 'selected' : '' }}>Baik</option>
+                            <option value="Rusak Ringan" {{ request('kondisi') == 'Rusak Ringan' ? 'selected' : '' }}>Rusak Ringan</option>
+                            <option value="Rusak Berat" {{ request('kondisi') == 'Rusak Berat' ? 'selected' : '' }}>Rusak Berat</option>
                         </select>
                     </div>
 
@@ -103,19 +103,19 @@
     <div class="grid grid-cols-1 gap-6 sm:grid-cols-4">
         <div class="bg-white rounded-xl shadow-sm border p-6">
             <p class="text-sm text-gray-600">Total Aset</p>
-            <p class="text-2xl font-bold">{{ $aset->total() }}</p>
+            <p class="text-2xl font-bold">{{ $stats['total'] }}</p>
         </div>
         <div class="bg-white rounded-xl shadow-sm border p-6">
             <p class="text-sm text-gray-600">Kondisi Baik</p>
-            <p class="text-2xl font-bold text-green-600">{{ $aset->where('kondisi', 'baik')->count() }}</p>
+            <p class="text-2xl font-bold text-green-600">{{ $stats['baik'] }}</p>
         </div>
         <div class="bg-white rounded-xl shadow-sm border p-6">
             <p class="text-sm text-gray-600">Rusak Ringan</p>
-            <p class="text-2xl font-bold text-yellow-600">{{ $aset->where('kondisi', 'rusak ringan')->count() }}</p>
+            <p class="text-2xl font-bold text-yellow-600">{{ $stats['rusak_ringan'] }}</p>
         </div>
         <div class="bg-white rounded-xl shadow-sm border p-6">
             <p class="text-sm text-gray-600">Rusak Berat</p>
-            <p class="text-2xl font-bold text-red-600">{{ $aset->where('kondisi', 'rusak berat')->count() }}</p>
+            <p class="text-2xl font-bold text-red-600">{{ $stats['rusak_berat'] }}</p>
         </div>
     </div>
 
@@ -140,18 +140,23 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm">{{ $item->kategori ?? '-' }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm">{{ format_rupiah($item->harga_perolehan ?? 0) }}</td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            @if($item->kondisi == 'baik')
-                                <span class="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">✅ Baik</span>
-                            @elseif($item->kondisi == 'rusak ringan')
-                                <span class="px-2 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800">⚠️ Rusak Ringan</span>
+                            @if(strtolower($item->kondisi) == 'baik')
+                                <span class="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">Baik</span>
+                            @elseif(strtolower($item->kondisi) == 'rusak ringan')
+                                <span class="px-2 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800">Rusak Ringan</span>
                             @else
-                                <span class="px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800">❌ Rusak Berat</span>
+                                <span class="px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800">Rusak Berat</span>
                             @endif
                         </td>
                         <td class="px-6 py-4 text-sm">{{ $item->lokasi ?? '-' }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
-                            <a href="{{ route('aset.edit', $item->id ?? 1) }}" class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</a>
-                            <a href="{{ route('aset.show', $item->id ?? 1) }}" class="text-gray-600 hover:text-gray-900">Detail</a>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm space-x-2">
+                            <a href="{{ route('aset.show', $item->id ?? 1) }}" class="text-gray-600 hover:text-gray-900 font-medium">Detail</a>
+                            <a href="{{ route('aset.edit', $item->id ?? 1) }}" class="text-indigo-600 hover:text-indigo-900 font-medium">Edit</a>
+                            <form action="{{ route('aset.destroy', $item->id ?? 1) }}" method="POST" class="inline-block" onsubmit="return confirm('Apakah Anda yakin ingin menghapus aset ini?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="text-red-600 hover:text-red-900 font-medium">Hapus</button>
+                            </form>
                         </td>
                     </tr>
                     @empty

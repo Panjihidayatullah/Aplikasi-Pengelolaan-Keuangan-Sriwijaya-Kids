@@ -4,18 +4,23 @@
 @section('page-title', 'Data Pembayaran')
 
 @section('content')
+@php
+    $selectedJenisPembayaranId = \App\Models\JenisPembayaran::representativeIdFor((int) request('jenis_pembayaran_id'))
+        ?? request('jenis_pembayaran_id');
+@endphp
+
 <div class="space-y-6">
     <!-- Header -->
-    <div class="flex items-center justify-between">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-            <h2 class="text-2xl font-bold text-gray-900">Data Pembayaran</h2>
+            <h2 class="text-xl sm:text-2xl font-bold text-gray-900">Data Pembayaran</h2>
             <p class="mt-1 text-sm text-gray-600">Kelola pembayaran siswa (SPP, Uang Gedung, dll)</p>
         </div>
-        <a href="{{ route('pembayaran.create') }}" class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-lg font-semibold text-sm text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition">
+        <a href="{{ route('pembayaran.create') }}" class="inline-flex items-center justify-center px-4 py-2.5 bg-green-600 border border-transparent rounded-lg font-semibold text-sm text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition touch-target w-full sm:w-auto">
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
             </svg>
-            Input Pembayaran
+            <span class="whitespace-nowrap">Input Pembayaran</span>
         </a>
     </div>
 
@@ -62,7 +67,7 @@
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm">
                         <option value="">Semua Jenis</option>
                         @foreach($jenisPembayaran as $jenis)
-                            <option value="{{ $jenis->id }}" {{ request('jenis_pembayaran_id') == $jenis->id ? 'selected' : '' }}>
+                            <option value="{{ $jenis->id }}" {{ (string) $selectedJenisPembayaranId === (string) $jenis->id ? 'selected' : '' }}>
                                 {{ $jenis->nama }}
                             </option>
                         @endforeach
@@ -83,16 +88,16 @@
                 </div>
             </div>
 
-            <div class="flex items-center space-x-3">
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                 <button type="submit" 
-                        class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition">
+                        class="inline-flex items-center justify-center px-4 py-2.5 bg-green-600 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition touch-target">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                     </svg>
                     Filter Data
                 </button>
                 <a href="{{ route('pembayaran.index') }}" 
-                   class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-lg font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 transition">
+                   class="inline-flex items-center justify-center px-4 py-2.5 bg-gray-200 border border-transparent rounded-lg font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 transition touch-target">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
@@ -173,7 +178,7 @@
     <!-- Table -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
+            <table class="min-w-full divide-y divide-gray-200" data-slider-per-page="10">
                 <thead class="bg-gray-50">
                     <tr>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tanggal</th>
@@ -192,7 +197,7 @@
                             <div class="text-sm font-medium text-gray-900">{{ $item->siswa->nama ?? '-' }}</div>
                             <div class="text-xs text-gray-500">{{ $item->siswa->kelas->nama_kelas ?? '-' }}</div>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm">{{ $item->jenis->nama ?? '-' }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm">{{ $item->jenis ? \App\Models\JenisPembayaran::normalizeNama($item->jenis->nama) : '-' }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600">{{ format_rupiah($item->jumlah ?? 0) }}</td>
                         <td class="px-6 py-4 whitespace-nowrap"><span class="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">{{ $item->metode_bayar ?? '-' }}</span></td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm">

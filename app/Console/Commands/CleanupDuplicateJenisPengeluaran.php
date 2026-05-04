@@ -44,7 +44,7 @@ class CleanupDuplicateJenisPengeluaran extends Command
                     }
                     
                     // Delete the duplicate
-                    $duplicate->delete();
+                    JenisPengeluaran::where('id', $duplicate->id)->delete();
                     $removedCount++;
                     $this->info("  Deleted duplicate ID: {$duplicate->id}");
                 }

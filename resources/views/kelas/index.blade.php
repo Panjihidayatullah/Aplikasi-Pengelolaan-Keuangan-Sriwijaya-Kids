@@ -4,7 +4,7 @@
 @section('page-title', 'Data Kelas')
 
 @section('content')
-<div class="space-y-6">
+<div class="space-y-6" data-table-slider-ignore>
     <!-- Header -->
     <div class="flex items-center justify-between">
         <div>
@@ -42,12 +42,9 @@
                                 id="tingkat" 
                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm">
                             <option value="">Semua Tingkat</option>
-                            <option value="7" {{ request('tingkat') == '7' ? 'selected' : '' }}>Tingkat 7</option>
-                            <option value="8" {{ request('tingkat') == '8' ? 'selected' : '' }}>Tingkat 8</option>
-                            <option value="9" {{ request('tingkat') == '9' ? 'selected' : '' }}>Tingkat 9</option>
-                            <option value="10" {{ request('tingkat') == '10' ? 'selected' : '' }}>Tingkat 10</option>
-                            <option value="11" {{ request('tingkat') == '11' ? 'selected' : '' }}>Tingkat 11</option>
-                            <option value="12" {{ request('tingkat') == '12' ? 'selected' : '' }}>Tingkat 12</option>
+                            @foreach($tingkatOptions ?? collect() as $tingkat)
+                            <option value="{{ $tingkat }}" {{ (string) request('tingkat') === (string) $tingkat ? 'selected' : '' }}>Tingkat {{ $tingkat }}</option>
+                            @endforeach
                         </select>
                     </div>
                 </div>
@@ -110,12 +107,15 @@
                 <tbody class="bg-white divide-y divide-gray-200">
                     @forelse($kelas as $item)
                     <tr class="hover:bg-gray-50">
+                        @php
+                            $tingkat = $item->tingkat ?: \App\Models\Kelas::inferTingkatFromNama($item->nama_kelas);
+                        @endphp
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="text-sm font-medium text-gray-900">{{ $item->nama_kelas ?? 'Kelas ' . $loop->iteration }}</div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <span class="px-2 py-1 text-xs font-medium rounded-full bg-indigo-100 text-indigo-800">
-                                Tingkat {{ $item->tingkat ?? $loop->iteration }}
+                                Tingkat {{ $tingkat ?? '-' }}
                             </span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -125,6 +125,7 @@
                             {{ $item->siswa_count ?? 0 }} siswa
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <a href="{{ route('kelas.show', $item->id ?? 1) }}" class="text-blue-600 hover:text-blue-900 mr-3">Rombel</a>
                             <a href="{{ route('kelas.edit', $item->id ?? 1) }}" class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</a>
                             <form action="{{ route('kelas.destroy', $item->id ?? 1) }}" method="POST" class="inline">
                                 @csrf

@@ -54,9 +54,10 @@
                 <!-- Notifications -->
                 <div x-data="{ open: false }" class="relative">
                     <button @click="open = !open" 
-                            class="p-2 rounded-full text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            class="topbar-notif-trigger p-2 rounded-full bg-white text-blue-600 hover:text-blue-700 hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-colors"
+                            style="background: #ffffff !important; background-color: #ffffff !important;">
                         <span class="sr-only">View notifications</span>
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
                         </svg>
                         @if(isset($notificationCount) && $notificationCount > 0)
@@ -73,18 +74,18 @@
                          x-transition:leave="transition ease-in duration-75"
                          x-transition:leave-start="transform opacity-100 scale-100"
                          x-transition:leave-end="transform opacity-0 scale-95"
-                         class="absolute right-0 mt-2 w-96 bg-white rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 z-50"
-                         style="display: none;">
+                         class="topbar-notif-dropdown absolute right-0 mt-2 w-96 bg-white rounded-lg shadow-lg ring-1 ring-slate-200 z-50"
+                         style="display: none; background: #ffffff !important; background-color: #ffffff !important;">
                         <div class="p-4 border-b border-gray-200">
                             <h3 class="text-sm font-semibold text-gray-900">Notifikasi Terbaru</h3>
                             @if(isset($notificationCount))
                             <p class="text-xs text-gray-500 mt-0.5">{{ $notificationCount }} aktivitas terbaru</p>
                             @endif
                         </div>
-                        <div class="max-h-96 overflow-y-auto">
+                        <div class="max-h-96 overflow-y-auto" style="background: #ffffff !important; background-color: #ffffff !important;">
                             @if(isset($recentNotifications) && $recentNotifications->count() > 0)
                                 @foreach($recentNotifications as $notif)
-                                <a href="{{ $notif['url'] }}" class="block px-4 py-3 hover:bg-gray-50 transition border-l-4 border-transparent hover:border-blue-500">
+                                <a href="{{ $notif['url'] }}" class="topbar-notif-item block px-4 py-3 hover:bg-gray-50 transition border-l-4 border-transparent hover:border-blue-500" style="background: #ffffff !important; background-color: #ffffff !important;">
                                     <div class="flex items-start">
                                         <div class="flex-shrink-0">
                                             <div class="w-10 h-10 rounded-full {{ $notif['icon_bg'] }} flex items-center justify-center">
@@ -105,7 +106,7 @@
                                 </a>
                                 @endforeach
                             @else
-                            <div class="px-4 py-12 text-center">
+                            <div class="px-4 py-12 text-center" style="background: #ffffff !important; background-color: #ffffff !important;">
                                 <svg class="w-12 h-12 mx-auto text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
                                 </svg>
@@ -128,15 +129,16 @@
                 <!-- User Menu -->
                 <div x-data="{ open: false }" class="relative">
                     <button @click="open = !open" 
-                            class="flex items-center space-x-3 px-3 py-2 rounded-xl hover:bg-slate-50 transition-all duration-200 focus:outline-none group">
+                            class="topbar-user-trigger flex items-center space-x-3 px-3 py-2 rounded-xl bg-white shadow-[0_0_18px_rgba(59,130,246,0.16)] hover:bg-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-300 group"
+                            style="background: #ffffff !important; background-color: #ffffff !important;">
                         <div class="hidden md:block text-right">
-                            <p class="text-sm font-semibold text-slate-700 group-hover:text-blue-600 transition-colors">{{ Auth::user()->name ?? 'User' }}</p>
-                            <p class="text-xs text-slate-500">{{ Auth::user()->email ?? '' }}</p>
+                            <p class="text-sm font-semibold text-blue-700 group-hover:text-blue-800 transition-colors">{{ Auth::user()->name ?? 'User' }}</p>
+                            <p class="text-xs text-blue-500">{{ Auth::user()->email ?? '' }}</p>
                         </div>
                         <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center text-white font-bold text-base shadow-lg shadow-blue-500/30 group-hover:shadow-xl group-hover:shadow-blue-500/40 transition-all duration-200">
                             {{ substr(Auth::user()->name ?? 'U', 0, 1) }}
                         </div>
-                        <svg class="w-4 h-4 text-slate-400 group-hover:text-blue-600 transition-colors" fill="currentColor" viewBox="0 0 20 20">
+                        <svg class="w-4 h-4 text-blue-500 group-hover:text-blue-700 transition-colors" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
                         </svg>
                     </button>
@@ -152,14 +154,14 @@
                          x-transition:leave-end="transform opacity-0 scale-95"
                          class="absolute right-0 mt-3 w-64 bg-white rounded-2xl shadow-2xl ring-1 ring-slate-200 overflow-hidden">
                         <!-- Profile Header -->
-                        <div class="px-5 py-4 bg-gradient-to-r from-blue-500 to-cyan-400">
+                        <div class="px-5 py-4 bg-white border-b border-blue-100">
                             <div class="flex items-center space-x-3">
-                                <div class="w-14 h-14 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                                <div class="w-14 h-14 rounded-xl bg-blue-50 flex items-center justify-center text-blue-700 font-bold text-xl shadow-sm border border-blue-100">
                                     {{ substr(Auth::user()->name ?? 'U', 0, 1) }}
                                 </div>
                                 <div>
-                                    <p class="text-sm font-bold text-white">{{ Auth::user()->name ?? 'User' }}</p>
-                                    <p class="text-xs text-blue-100">{{ Auth::user()->email ?? '' }}</p>
+                                    <p class="text-sm font-bold text-slate-800">{{ Auth::user()->name ?? 'User' }}</p>
+                                    <p class="text-xs text-slate-500">{{ Auth::user()->email ?? '' }}</p>
                                 </div>
                             </div>
                         </div>
@@ -172,16 +174,16 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                                     </svg>
                                 </div>
-                                <span>My Profile</span>
+                                <span>Profil Saya</span>
                             </a>
-                            <a href="{{ route('profile.edit') }}" class="flex items-center px-5 py-3 text-sm font-medium text-slate-700 hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 group">
-                                <div class="w-9 h-9 rounded-lg bg-slate-100 group-hover:bg-blue-100 flex items-center justify-center mr-3 transition-colors">
-                                    <svg class="w-5 h-5 text-slate-600 group-hover:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <a href="{{ route('settings.preferences') }}" class="flex items-center px-5 py-3 text-sm font-medium text-slate-700 hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 group">
+                                <div class="w-9 h-9 rounded-lg bg-blue-50 group-hover:bg-blue-100 flex items-center justify-center mr-3 transition-colors">
+                                    <svg class="w-5 h-5 text-blue-600 group-hover:text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                     </svg>
                                 </div>
-                                <span>Settings</span>
+                                <span>Pengaturan</span>
                             </a>
                         </div>
                         
@@ -205,3 +207,39 @@
         </div>
     </div>
 </header>
+
+<style>
+    header .flex.items-center.space-x-4 > .relative > button,
+    .topbar-notif-trigger,
+    .topbar-notif-trigger:hover,
+    .topbar-user-trigger,
+    .topbar-user-trigger:hover {
+        background: #ffffff !important;
+        background-color: #ffffff !important;
+    }
+
+    .topbar-user-trigger {
+        border: 0 !important;
+        box-shadow: 0 0 18px rgba(59, 130, 246, 0.16) !important;
+    }
+
+    .topbar-notif-trigger,
+    .topbar-notif-trigger:hover,
+    .topbar-notif-trigger svg {
+        color: #2563eb !important;
+        stroke: #2563eb !important;
+    }
+
+    .topbar-notif-dropdown,
+    .topbar-notif-dropdown > div {
+        background: #ffffff !important;
+        background-color: #ffffff !important;
+    }
+
+    .topbar-notif-dropdown .max-h-96,
+    .topbar-notif-dropdown .topbar-notif-item,
+    .topbar-notif-dropdown .topbar-notif-item:hover {
+        background: #ffffff !important;
+        background-color: #ffffff !important;
+    }
+</style>

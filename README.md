@@ -1,14 +1,13 @@
-<<<<<<< HEAD
 # 🎓 Sistem Pengelolaan Keuangan Sekolah Kids Sriwijaya
 
-![Laravel](https://img.shields.io/badge/Laravel-12.x-FF2D20?style=for-the-badge&logo=laravel)
-![PHP](https://img.shields.io/badge/PHP-8.3+-777BB4?style=for-the-badge&logo=php)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-4169E1?style=for-the-badge&logo=postgresql)
-![Tailwind](https://img.shields.io/badge/Tailwind-3.4-06B6D4?style=for-the-badge&logo=tailwindcss)
+![Laravel](https://img.shields.io/badge/Laravel-11.x-FF2D20?style=for-the-badge&logo=laravel)
+![PHP](https://img.shields.io/badge/PHP-8.2+-777BB4?style=for-the-badge&logo=php)
+![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?style=for-the-badge&logo=mysql)
+![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3-7952B3?style=for-the-badge&logo=bootstrap)
 
 ## 📖 Deskripsi
 
-Aplikasi Pengelolaan Keuangan berbasis website yang dibangun untuk Homeschooling Sriwijaya Kids. Sistem ini dibangun menggunakan Laravel dan PostgreSQL untuk membantu pencatatan pemasukan, pengeluaran, serta laporan keuangan secara terstruktur, efisien, dan mudah diakses. Aplikasi ini dirancang khusus untuk mengelola aspek keuangan sekolah secara efisien, transparan, dan profesional dengan fitur lengkap untuk pengelolaan data siswa, pembayaran SPP dan biaya sekolah lainnya, pencatatan pengeluaran, manajemen aset, serta laporan keuangan yang komprehensif.
+Sistem Pengelolaan Keuangan Sekolah Kids Sriwijaya adalah aplikasi web berbasis Laravel yang dirancang khusus untuk mengelola aspek keuangan sekolah secara efisien, transparan, dan profesional. Aplikasi ini menyediakan fitur lengkap untuk pengelolaan data siswa, pembayaran SPP dan biaya sekolah lainnya, pencatatan pengeluaran, manajemen aset, serta laporan keuangan yang komprehensif.
 
 Sistem ini dibangun dengan arsitektur **clean code**, mengikuti **best practices Laravel**, dan menggunakan **Service Layer Pattern** untuk memisahkan business logic dari controller, sehingga mudah di-maintain dan di-scale.
 
@@ -222,19 +221,19 @@ Menggunakan **Spatie Laravel Permission** dengan 3 role utama:
 ## 🛠️ Technology Stack
 
 ### Backend
-- **Framework:** Laravel 12.x
-- **Language:** PHP 8.3+
-- **Database:** PostgreSQL 17
+- **Framework:** Laravel 11.x
+- **Language:** PHP 8.2+
+- **Database:** MySQL 8.0
 - **Authentication:** Laravel Breeze
 - **Authorization:** Spatie Laravel Permission
 
 ### Frontend
-- **CSS Framework:** Tailwind CSS 3.4
-- **JavaScript:** React + TypeScript (Inertia.js)
+- **CSS Framework:** Bootstrap 5.3
+- **JavaScript:** Vanilla JS + jQuery
 - **Charts:** Chart.js 4.x
-- **UI Components:** shadcn/ui
-- **Icons:** Heroicons / Lucide
-- **Notifications:** Toast notifications
+- **Tables:** DataTables
+- **Icons:** Font Awesome 6
+- **Notifications:** SweetAlert2
 
 ### Libraries & Packages
 - **maatwebsite/excel** - Excel export/import
@@ -254,11 +253,11 @@ Menggunakan **Spatie Laravel Permission** dengan 3 role utama:
 ## 📋 Persyaratan Sistem
 
 ### Minimum Requirements
-- PHP >= 8.3
-- PostgreSQL >= 17 (atau database lokal)
+- PHP >= 8.2
+- MySQL >= 8.0 atau MariaDB >= 10.3
 - Composer 2.x
-- Node.js >= 20.x (untuk development)
-- Web Server (Apache/Nginx atau Laravel built-in server)
+- Node.js >= 18.x (untuk development)
+- Web Server (Apache/Nginx)
 
 ### Recommended (Development)
 - XAMPP atau Laragon (Windows)
@@ -306,17 +305,17 @@ cp .env.example .env
 ### 4. Konfigurasi Database
 Edit file `.env` dan sesuaikan:
 ```env
-DB_CONNECTION=pgsql
+DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
-DB_PORT=5432
-DB_DATABASE=sriwijaya_kidss_local
-DB_USERNAME=postgres
-DB_PASSWORD=your_password
+DB_PORT=3306
+DB_DATABASE=sriwijaya_kids_finance
+DB_USERNAME=root
+DB_PASSWORD=
 ```
 
-**Buat database di PostgreSQL:**
+**Buat database di MySQL:**
 ```sql
-CREATE DATABASE sriwijaya_kidss_local;
+CREATE DATABASE sriwijaya_kids_finance;
 ```
 
 ### 5. Generate Application Key
@@ -869,11 +868,5 @@ Sistem ini **siap dipresentasikan** sebagai Tugas Akhir dengan fitur:
 ---
 
 <div align="center">
-
-### 🌟 **Jangan lupa beri star jika project ini bermanfaat!** 🌟
-
-**🎉 Happy Coding! 🎉**
-
-*Sistem ini dibuat dengan standar profesional dan siap digunakan untuk production*
 
 </div>

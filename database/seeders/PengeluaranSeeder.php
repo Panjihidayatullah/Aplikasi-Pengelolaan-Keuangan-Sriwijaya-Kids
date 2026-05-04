@@ -34,8 +34,9 @@ class PengeluaranSeeder extends Seeder
                 // Number of expenses per jenis per month
                 $count = match($jenis->nama) {
                     'Gaji Guru' => 1, // Once per month
-                    'Listrik', 'Air', 'Internet' => 1, // Monthly bills
-                    'ATK', 'Pemeliharaan', 'Transport', 'Konsumsi' => rand(2, 5), // Multiple times
+                    'Gaji Pegawai' => 1, // Once per month
+                    'Aset' => rand(1, 3),
+                    'Operasional' => rand(4, 8),
                     default => rand(1, 3),
                 };
                 
@@ -44,15 +45,10 @@ class PengeluaranSeeder extends Seeder
                     
                     // Determine amount based on type
                     $jumlah = match($jenis->nama) {
-                        'Gaji Guru' => rand(80000000, 120000000), // 80-120 juta
-                        'Listrik' => rand(3000000, 5000000), // 3-5 juta
-                        'Air' => rand(500000, 1000000), // 500k-1jt
-                        'Internet' => rand(1000000, 2000000), // 1-2 juta
-                        'ATK' => rand(200000, 1000000), // 200k-1jt
-                        'Pemeliharaan' => rand(1000000, 5000000), // 1-5 juta
-                        'Transport' => rand(300000, 1500000), // 300k-1.5jt
-                        'Konsumsi' => rand(500000, 2000000), // 500k-2jt
-                        'Honor' => rand(1000000, 3000000), // 1-3 juta
+                        'Gaji Guru' => rand(3000000, 9000000),
+                        'Gaji Pegawai' => rand(80000000, 140000000),
+                        'Aset' => rand(2000000, 25000000),
+                        'Operasional' => rand(300000, 6000000),
                         default => rand(500000, 2000000),
                     };
                     
@@ -83,15 +79,23 @@ class PengeluaranSeeder extends Seeder
     private function generateKeterangan($namaJenis, $tanggal): string
     {
         return match($namaJenis) {
-            'Gaji Guru' => 'Pembayaran gaji guru dan staff bulan ' . $tanggal->format('F Y'),
-            'Listrik' => 'Pembayaran tagihan listrik bulan ' . $tanggal->format('F Y'),
-            'Air' => 'Pembayaran PDAM bulan ' . $tanggal->format('F Y'),
-            'Internet' => 'Pembayaran internet dan telepon bulan ' . $tanggal->format('F Y'),
-            'ATK' => 'Pembelian alat tulis kantor',
-            'Pemeliharaan' => 'Biaya pemeliharaan dan perbaikan fasilitas',
-            'Transport' => 'Biaya transportasi dan BBM',
-            'Konsumsi' => 'Biaya konsumsi rapat dan acara',
-            'Honor' => 'Honor narasumber',
+            'Gaji Guru' => 'Pembayaran gaji guru bulan ' . $tanggal->format('F Y'),
+            'Gaji Pegawai' => 'Pembayaran gaji pegawai non-guru bulan ' . $tanggal->format('F Y'),
+            'Aset' => collect([
+                'Pembelian meja kelas baru',
+                'Pembelian kursi siswa',
+                'Pembelian papan tulis',
+                'Pembelian lemari arsip',
+                'Pembelian proyektor kelas',
+            ])->random(),
+            'Operasional' => collect([
+                'Pembayaran tagihan listrik bulan ' . $tanggal->format('F Y'),
+                'Pembayaran tagihan air bulan ' . $tanggal->format('F Y'),
+                'Pembayaran internet bulan ' . $tanggal->format('F Y'),
+                'Pembelian ATK operasional',
+                'Biaya kebersihan dan perlengkapan habis pakai',
+                'Biaya transport operasional sekolah',
+            ])->random(),
             default => 'Pengeluaran ' . $namaJenis,
         };
     }

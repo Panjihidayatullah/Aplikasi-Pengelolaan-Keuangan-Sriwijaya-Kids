@@ -14,7 +14,7 @@ return [
         'address' => env('SCHOOL_ADDRESS', 'Jl. Contoh No. 123, Palembang'),
         'phone' => env('SCHOOL_PHONE', '(0711) 1234567'),
         'email' => env('SCHOOL_EMAIL', 'info@sriwijayakids.com'),
-        'logo' => env('SCHOOL_LOGO', 'images/logo.png'),
+        'logo' => env('SCHOOL_LOGO', 'images/Logo_SriwijayaKids.png'),
         'website' => env('SCHOOL_WEBSITE', 'https://sriwijayakids.com'),
     ],
 

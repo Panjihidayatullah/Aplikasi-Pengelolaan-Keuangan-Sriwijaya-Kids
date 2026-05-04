@@ -50,11 +50,11 @@
                                 required
                                 class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all duration-200 bg-white @error('kategori') border-red-500 @enderror">
                             <option value="">Pilih Kategori</option>
-                            <option value="elektronik" {{ old('kategori', $aset->kategori) == 'elektronik' ? 'selected' : '' }}>Elektronik</option>
-                            <option value="furniture" {{ old('kategori', $aset->kategori) == 'furniture' ? 'selected' : '' }}>Furniture</option>
-                            <option value="kendaraan" {{ old('kategori', $aset->kategori) == 'kendaraan' ? 'selected' : '' }}>Kendaraan</option>
-                            <option value="gedung" {{ old('kategori', $aset->kategori) == 'gedung' ? 'selected' : '' }}>Gedung</option>
-                            <option value="lainnya" {{ old('kategori', $aset->kategori) == 'lainnya' ? 'selected' : '' }}>Lainnya</option>
+                            <option value="Elektronik" {{ old('kategori', $aset->kategori) == 'Elektronik' ? 'selected' : '' }}>Elektronik</option>
+                            <option value="Furniture" {{ old('kategori', $aset->kategori) == 'Furniture' ? 'selected' : '' }}>Furniture</option>
+                            <option value="Kendaraan" {{ old('kategori', $aset->kategori) == 'Kendaraan' ? 'selected' : '' }}>Kendaraan</option>
+                            <option value="Bangunan" {{ old('kategori', $aset->kategori) == 'Bangunan' ? 'selected' : '' }}>Gedung</option>
+                            <option value="Lainnya" {{ old('kategori', $aset->kategori) == 'Lainnya' ? 'selected' : '' }}>Lainnya</option>
                         </select>
                         @error('kategori')
                             <p class="mt-2 text-sm text-red-600 flex items-center">

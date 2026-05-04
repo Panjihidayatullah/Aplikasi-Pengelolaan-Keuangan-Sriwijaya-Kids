@@ -15,15 +15,14 @@
     
     <!-- Sidebar Header -->
     <div class="flex items-center justify-between h-20 px-6 border-b border-slate-700/50 flex-shrink-0">
-        <div class="flex items-center">
-            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center shadow-lg">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-                </svg>
-            </div>
-            <div class="ml-3 text-lg text-white">
-                <span class="font-bold">Sriwijaya</span> <span class="font-normal">Kids</span>
-            </div>
+        <div class="flex items-center gap-3 min-w-0">
+            <img src="{{ asset(config('finance.school.logo', 'images/Logo_SriwijayaKids.png')) }}"
+                 alt="{{ config('finance.school.name', config('app.name')) }}"
+                 class="h-12 w-auto object-contain shrink-0">
+            <span class="max-w-[140px] text-xs leading-tight text-white">
+                <span class="block">Homeschooling</span>
+                <span class="block">Sriwijaya <strong class="font-bold">Kids</strong></span>
+            </span>
         </div>
         <button @click="sidebarOpen = false" class="lg:hidden text-gray-400 hover:text-gray-600">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -53,6 +52,7 @@
         </a>
 
         <!-- Master Data Section -->
+        @if(is_admin())
         <div class="pt-6">
             <div class="px-4 mb-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">
                 Master Data
@@ -67,6 +67,15 @@
                 Siswa
             </a>
 
+            <!-- Guru -->
+            <a href="{{ route('guru.index') }}" 
+               class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 group {{ request()->routeIs('guru.*') ? 'bg-gradient-to-r from-blue-500 to-cyan-400 text-white shadow-lg shadow-blue-500/50' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                <svg class="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                </svg>
+                Guru
+            </a>
+
             <!-- Kelas -->
             <a href="{{ route('kelas.index') }}" 
                class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 group {{ request()->routeIs('kelas.*') ? 'bg-gradient-to-r from-blue-500 to-cyan-400 text-white shadow-lg shadow-blue-500/50' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
@@ -76,8 +85,214 @@
                 Kelas
             </a>
         </div>
+        @endif
+
+        <!-- Akademik Section -->
+        @if(is_admin() || (auth()->user()->hasRole('Guru')) || (auth()->user()->hasRole('Kepala Sekolah')) || is_siswa())
+        <div class="pt-6">
+            <div class="px-4 mb-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                Akademik
+            </div>
+
+            <!-- Kurikulum & Tahun Ajaran - Admin Only -->
+            @if(is_admin())
+            <a href="{{ route('akademik.kurikulum.index') }}" 
+               class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 group {{ request()->routeIs('akademik.kurikulum.*') ? 'bg-gradient-to-r from-blue-500 to-cyan-400 text-white shadow-lg shadow-blue-500/50' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                <svg class="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4a2 2 0 100-4m0 4a2 2 0 110-4"/>
+                </svg>
+                Kurikulum
+            </a>
+
+            <a href="{{ route('akademik.tahun-ajaran.index') }}" 
+                    class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 group {{ request()->routeIs('akademik.tahun-ajaran.*') ? 'bg-gradient-to-r from-blue-500 to-cyan-400 text-white shadow-lg shadow-blue-500/50' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                <svg class="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+                Tahun Ajaran
+            </a>
+
+            @if(can_access('view semester'))
+            <a href="{{ route('akademik.semester.index') }}" 
+                    class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 group {{ request()->routeIs('akademik.semester.*') ? 'bg-gradient-to-r from-blue-500 to-cyan-400 text-white shadow-lg shadow-blue-500/50' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                <svg class="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 4h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+                Semester
+            </a>
+            @endif
+
+            <a href="{{ route('akademik.ruang.index') }}"
+                    class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 group {{ request()->routeIs('akademik.ruang.*') ? 'bg-gradient-to-r from-blue-500 to-cyan-400 text-white shadow-lg shadow-blue-500/50' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                <svg class="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7l9-4 9 4-9 4-9-4zm0 5l9 4 9-4M3 17l9 4 9-4"/>
+                </svg>
+                Manajemen Ruang
+            </a>
+            @endif
+
+            @if(can_access('view lms-materi') || can_access('view lms-tugas') || can_access('view lms-monitoring') || can_access('view absensi') || is_admin() || auth()->user()->hasRole('Guru') || auth()->user()->hasRole('Kepala Sekolah') || is_siswa())
+            @php
+                $isLmsMenuActive = request()->routeIs('akademik.lms.*') || request()->routeIs('akademik.absensi.*');
+                $normalizedRoleNames = auth()->user()->getRoleNames()->map(function ($role) {
+                    $normalized = strtolower((string) $role);
+
+                    return preg_replace('/[^a-z0-9]/', '', $normalized);
+                });
+                $isKepalaSekolahRole = $normalizedRoleNames->contains('kepalasekolah');
+            @endphp
+            @if($isKepalaSekolahRole)
+            <a href="{{ route('akademik.lms.monitoring.index') }}"
+               class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 group {{ request()->routeIs('akademik.lms.monitoring.*') ? 'bg-gradient-to-r from-blue-500 to-cyan-400 text-white shadow-lg shadow-blue-500/50' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                <span class="inline-flex items-center">
+                    <svg class="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h10"/>
+                    </svg>
+                    LMS
+                </span>
+            </a>
+            @else
+            <div x-data="{ lmsOpen: {{ $isLmsMenuActive ? 'true' : 'false' }} }" class="space-y-1">
+                <button
+                    type="button"
+                    @click="lmsOpen = !lmsOpen"
+                    class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 group {{ $isLmsMenuActive ? 'bg-gradient-to-r from-blue-500 to-cyan-400 text-white shadow-lg shadow-blue-500/50' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}"
+                >
+                    <span class="inline-flex items-center">
+                        <svg class="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h10"/>
+                        </svg>
+                        LMS
+                    </span>
+                    <span class="inline-flex h-6 w-6 items-center justify-center rounded-md bg-white/20">
+                        <svg class="w-4 h-4 transition-transform duration-200" :class="lmsOpen ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </span>
+                </button>
+
+                <div x-show="lmsOpen" x-transition class="ml-6 mt-1 space-y-1">
+                @if(!$isKepalaSekolahRole)
+                <a href="{{ route('akademik.lms.index') }}"
+                        class="flex items-center px-3 py-2 text-sm rounded-lg transition {{ request()->routeIs('akademik.lms.index') || request()->routeIs('akademik.lms.pertemuan') ? 'text-cyan-200 bg-slate-800' : 'text-slate-400 hover:text-white hover:bg-slate-800' }}">
+                    Halaman LMS
+                </a>
+                @endif
+
+                @if(can_access('view lms-materi') && !$isKepalaSekolahRole)
+                <a href="{{ route('akademik.lms.materi.index') }}"
+                        class="flex items-center px-3 py-2 text-sm rounded-lg transition {{ request()->routeIs('akademik.lms.materi.*') ? 'text-cyan-200 bg-slate-800' : 'text-slate-400 hover:text-white hover:bg-slate-800' }}">
+                    Materi
+                </a>
+                @endif
+
+                @if(can_access('view lms-tugas') && !$isKepalaSekolahRole)
+                <a href="{{ route('akademik.lms.tugas.index') }}"
+                        class="flex items-center px-3 py-2 text-sm rounded-lg transition {{ request()->routeIs('akademik.lms.tugas.*') ? 'text-cyan-200 bg-slate-800' : 'text-slate-400 hover:text-white hover:bg-slate-800' }}">
+                    Tugas
+                </a>
+                @endif
+
+                @if((can_access('view absensi') || is_admin() || auth()->user()->hasRole('Guru')) && !$isKepalaSekolahRole)
+                <a href="{{ route('akademik.absensi.index') }}"
+                        class="flex items-center px-3 py-2 text-sm rounded-lg transition {{ request()->routeIs('akademik.absensi.*') ? 'text-cyan-200 bg-slate-800' : 'text-slate-400 hover:text-white hover:bg-slate-800' }}">
+                    Absensi
+                </a>
+                @endif
+
+                @if(can_access('view lms-monitoring'))
+                <a href="{{ route('akademik.lms.monitoring.index') }}"
+                        class="flex items-center px-3 py-2 text-sm rounded-lg transition {{ request()->routeIs('akademik.lms.monitoring.*') ? 'text-cyan-200 bg-slate-800' : 'text-slate-400 hover:text-white hover:bg-slate-800' }}">
+                    Monitoring
+                </a>
+                @endif
+                </div>
+            </div>
+            @endif
+            @endif
+
+            <!-- Nilai & Transkrip - Guru & Admin -->
+            @if(is_admin() || auth()->user()->hasRole('Guru'))
+            <a href="{{ route('akademik.transkrip-nilai.index') }}" 
+                    class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 group {{ request()->routeIs('akademik.transkrip-nilai.*') ? 'bg-gradient-to-r from-blue-500 to-cyan-400 text-white shadow-lg shadow-blue-500/50' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                <svg class="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+                Transkrip Nilai
+            </a>
+            @endif
+
+            @if(is_siswa())
+            <a href="{{ route('akademik.transkrip-nilai.saya') }}"
+                    class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 group {{ request()->routeIs('akademik.transkrip-nilai.saya*') ? 'bg-gradient-to-r from-blue-500 to-cyan-400 text-white shadow-lg shadow-blue-500/50' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                <svg class="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+                Transkrip Nilai
+            </a>
+            @endif
+
+            @if(!is_siswa())
+            <!-- Raport Siswa - Admin & Guru -->
+            @if(is_admin() || auth()->user()->hasRole('Guru'))
+            <a href="{{ route('akademik.raport.index') }}"
+                    class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 group {{ request()->routeIs('akademik.raport.*') ? 'bg-gradient-to-r from-blue-500 to-cyan-400 text-white shadow-lg shadow-blue-500/50' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                <svg class="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+                Raport Siswa
+            </a>
+            @endif
+            @endif
+
+
+            @if(can_access('view ujian') || is_admin() || auth()->user()->hasRole('Guru') || is_siswa())
+            <a href="{{ route('akademik.ujian.index') }}" 
+                    class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 group {{ request()->routeIs('akademik.ujian.*') ? 'bg-gradient-to-r from-blue-500 to-cyan-400 text-white shadow-lg shadow-blue-500/50' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                <svg class="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3"/>
+                </svg>
+                Jadwal Ujian
+            </a>
+            @endif
+
+            <!-- Jadwal Pelajaran - Admin, Guru, Siswa, Kepala Sekolah -->
+            @if(is_admin() || auth()->user()->hasRole('Guru') || is_siswa() || auth()->user()->hasRole('Kepala Sekolah'))
+            <a href="{{ route('akademik.jadwal-pelajaran.index') }}"
+                    class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 group {{ request()->routeIs('akademik.jadwal-pelajaran.*') ? 'bg-gradient-to-r from-blue-500 to-cyan-400 text-white shadow-lg shadow-blue-500/50' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                <svg class="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+                Jadwal Pelajaran
+            </a>
+            @endif
+
+            <!-- Pengumuman - All Akademik Users -->
+            @if(can_access('view pengumuman'))
+            <a href="{{ route('akademik.pengumuman.index') }}" 
+                    class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 group {{ request()->routeIs('akademik.pengumuman.*') ? 'bg-gradient-to-r from-blue-500 to-cyan-400 text-white shadow-lg shadow-blue-500/50' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                <svg class="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                </svg>
+                Pengumuman
+            </a>
+            @endif
+
+            <!-- Kenaikan Kelas - Admin & Kepala Sekolah & Guru -->
+            @if(is_admin() || auth()->user()->hasRole('Kepala Sekolah') || auth()->user()->hasRole('Guru'))
+            <a href="{{ route('akademik.kenaikan-kelas.index') }}" 
+                    class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 group {{ request()->routeIs('akademik.kenaikan-kelas.*') ? 'bg-gradient-to-r from-blue-500 to-cyan-400 text-white shadow-lg shadow-blue-500/50' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                <svg class="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                </svg>
+                Kenaikan Kelas
+            </a>
+            @endif
+        </div>
+        @endif
 
         <!-- Keuangan Section -->
+        @if(is_admin() || is_bendahara())
         <div class="pt-6">
             <div class="px-4 mb-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">
                 Keuangan
@@ -101,6 +316,15 @@
                 Pengeluaran
             </a>
 
+            <!-- Gaji Guru -->
+            <a href="{{ route('gaji-guru.index') }}" 
+               class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 group {{ request()->routeIs('gaji-guru.*') ? 'bg-gradient-to-r from-blue-500 to-cyan-400 text-white shadow-lg shadow-blue-500/50' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                <svg class="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                Gaji Guru
+            </a>
+
             <!-- Aset -->
             <a href="{{ route('aset.index') }}" 
                class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 group {{ request()->routeIs('aset.*') ? 'bg-gradient-to-r from-blue-500 to-cyan-400 text-white shadow-lg shadow-blue-500/50' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
@@ -110,14 +334,34 @@
                 Aset Sekolah
             </a>
         </div>
+        @endif
+
+        <!-- Keuangan Guru Section -->
+        @if(auth()->user()->hasRole('Guru'))
+        <div class="pt-6">
+            <div class="px-4 mb-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                Keuangan
+            </div>
+
+            <a href="{{ route('gaji-saya.index') }}"
+               class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 group {{ request()->routeIs('gaji-saya.*') ? 'bg-gradient-to-r from-blue-500 to-cyan-400 text-white shadow-lg shadow-blue-500/50' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                <svg class="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                Gaji Saya
+            </a>
+        </div>
+        @endif
 
         <!-- Laporan Section -->
+        @if(can_access('view laporan cashflow') || can_access('view laporan pemasukan') || can_access('view laporan pengeluaran'))
         <div class="pt-6">
             <div class="px-4 mb-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">
                 Laporan
             </div>
             
             <!-- Laporan Cashflow -->
+            @if(can_access('view laporan cashflow'))
             <a href="{{ route('laporan.cashflow') }}" 
                class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 group {{ request()->routeIs('laporan.cashflow') ? 'bg-gradient-to-r from-blue-500 to-cyan-400 text-white shadow-lg shadow-blue-500/50' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
                 <svg class="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -125,8 +369,10 @@
                 </svg>
                 Cashflow
             </a>
+            @endif
 
             <!-- Laporan Pemasukan -->
+            @if(can_access('view laporan pemasukan'))
             <a href="{{ route('laporan.pemasukan') }}" 
                class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 group {{ request()->routeIs('laporan.pemasukan') ? 'bg-gradient-to-r from-blue-500 to-cyan-400 text-white shadow-lg shadow-blue-500/50' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
                 <svg class="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -134,8 +380,10 @@
                 </svg>
                 Pemasukan
             </a>
+            @endif
 
             <!-- Laporan Pengeluaran -->
+            @if(can_access('view laporan pengeluaran'))
             <a href="{{ route('laporan.pengeluaran') }}" 
                class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 group {{ request()->routeIs('laporan.pengeluaran') ? 'bg-gradient-to-r from-blue-500 to-cyan-400 text-white shadow-lg shadow-blue-500/50' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
                 <svg class="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -143,9 +391,12 @@
                 </svg>
                 Pengeluaran
             </a>
+            @endif
         </div>
+        @endif
 
         <!-- Pengaturan Section -->
+        @if(is_admin())
         <div class="pt-6 pb-4">
             <div class="px-4 mb-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">
                 Pengaturan
@@ -169,13 +420,14 @@
                 Role & Permission
             </a>
         </div>
+        @endif
     </nav>
 
     <!-- User Profile Section -->
     <div class="flex-shrink-0 p-4 border-t border-slate-700/50 bg-slate-900/50 backdrop-blur-sm" x-data="{ profileOpen: false }">
         <div class="relative">
             <!-- Profile Button -->
-            <button @click="profileOpen = !profileOpen" class="w-full flex items-center p-3 rounded-xl hover:bg-slate-800 transition-all duration-200 group">
+            <button @click="profileOpen = !profileOpen" class="w-full flex items-center p-3 rounded-xl hover:bg-white/15 transition-all duration-200 group">
                 <div class="relative flex-shrink-0">
                     <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center text-white font-bold text-sm shadow-lg">
                         {{ strtoupper(substr(auth()->user()->name, 0, 2)) }}
@@ -217,12 +469,12 @@
                         Profil Saya
                     </a>
 
-                    <a href="{{ route('profile.edit') }}" class="flex items-center px-4 py-2.5 text-sm text-slate-300 hover:bg-slate-700 hover:text-white transition-colors group">
+                    <a href="{{ route('settings.preferences') }}" class="flex items-center px-4 py-2.5 text-sm text-slate-300 hover:bg-slate-700 hover:text-white transition-colors group">
                         <svg class="w-5 h-5 mr-3 text-slate-400 group-hover:text-blue-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                         </svg>
-                        Pengaturan Akun
+                        Pengaturan
                     </a>
 
                     <div class="border-t border-slate-700 my-2"></div>
@@ -241,3 +493,14 @@
         </div>
     </div>
 </aside>
+
+<style>
+    aside nav a.hover\:bg-slate-800:hover,
+    aside nav a.hover\:bg-slate-700:hover,
+    aside nav a.bg-slate-800,
+    aside nav a.bg-slate-700,
+    aside nav button.hover\:bg-slate-800:hover,
+    aside nav button.hover\:bg-slate-700:hover {
+        background-color: rgba(255, 255, 255, 0.14) !important;
+    }
+</style>

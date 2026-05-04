@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
-use Faker\Factory as Faker;
 
 class SiswaSeeder extends Seeder
 {
@@ -14,7 +13,7 @@ class SiswaSeeder extends Seeder
      */
     public function run(): void
     {
-        $faker = Faker::create('id_ID');
+        $faker = fake('id_ID');
         $now = Carbon::now();
         
         // Get all kelas IDs

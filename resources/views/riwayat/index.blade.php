@@ -3,14 +3,82 @@
 @section('title', 'Riwayat Aktivitas - ' . config('app.name'))
 @section('page-title', 'Riwayat Aktivitas')
 
+@push('styles')
+<style>
+    .riwayat-pagination nav a.inline-flex,
+    .riwayat-pagination nav span.inline-flex,
+    .riwayat-pagination nav [aria-current="page"] span.inline-flex,
+    .riwayat-pagination nav [aria-disabled="true"] span.inline-flex {
+        background: #ffffff !important;
+        background-color: #ffffff !important;
+        border-color: #bfdbfe !important;
+        color: #2563eb !important;
+        box-shadow: none !important;
+    }
+
+    .riwayat-pagination nav a.inline-flex:hover,
+    .riwayat-pagination nav a.inline-flex:focus,
+    .riwayat-pagination nav a.inline-flex:active,
+    .riwayat-pagination nav span.inline-flex:hover,
+    .riwayat-pagination nav span.inline-flex:focus,
+    .riwayat-pagination nav span.inline-flex:active {
+        background: #ffffff !important;
+        background-color: #ffffff !important;
+        color: #2563eb !important;
+        border-color: #bfdbfe !important;
+    }
+
+    .riwayat-pagination nav [aria-current="page"] span.inline-flex {
+        box-shadow: inset 0 0 0 1px #93c5fd;
+        font-weight: 700;
+    }
+
+    .riwayat-pagination nav [aria-disabled="true"] span.inline-flex {
+        color: #94a3b8 !important;
+        border-color: #e2e8f0 !important;
+    }
+
+    .riwayat-pagination button,
+    .riwayat-pagination button:hover,
+    .riwayat-pagination button:focus,
+    .riwayat-pagination button:active {
+        background: #ffffff !important;
+        background-color: #ffffff !important;
+        color: #2563eb !important;
+        border-color: #bfdbfe !important;
+        box-shadow: none !important;
+    }
+
+    .riwayat-pagination button[aria-current="page"] {
+        background: #eff6ff !important;
+        color: #1d4ed8 !important;
+    }
+
+    .riwayat-pagination button:disabled {
+        background: #f8fafc !important;
+        color: #94a3b8 !important;
+        border-color: #e2e8f0 !important;
+        opacity: 1 !important;
+    }
+</style>
+@endpush
+
 @section('content')
 <div class="space-y-6">
     <!-- Header -->
     <div class="flex items-center justify-between">
         <div>
             <h2 class="text-2xl font-bold text-gray-900">Riwayat Aktivitas</h2>
-            <p class="mt-1 text-sm text-gray-600">Semua aktivitas dan kegiatan yang telah dilakukan di sistem</p>
+            <p class="mt-1 text-sm text-gray-600">Riwayat aktivitas yang berasal dari notifikasi akun Anda</p>
         </div>
+        @if(($unreadCount ?? 0) > 0)
+        <form method="POST" action="{{ route('akademik.notifikasi.mark-all-read') }}">
+            @csrf
+            <button type="submit" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-semibold">
+                Tandai Semua Dibaca
+            </button>
+        </form>
+        @endif
     </div>
 
     <!-- Filters -->
@@ -21,12 +89,9 @@
                 <div>
                     <label for="type" class="block text-sm font-medium text-gray-700 mb-2">Jenis Aktivitas</label>
                     <select name="type" id="type" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
-                        <option value="all" {{ $type === 'all' ? 'selected' : '' }}>Semua Aktivitas</option>
-                        <option value="pembayaran" {{ $type === 'pembayaran' ? 'selected' : '' }}>Pembayaran</option>
-                        <option value="siswa" {{ $type === 'siswa' ? 'selected' : '' }}>Siswa</option>
-                        <option value="pengeluaran" {{ $type === 'pengeluaran' ? 'selected' : '' }}>Pengeluaran</option>
-                        <option value="kelas" {{ $type === 'kelas' ? 'selected' : '' }}>Kelas</option>
-                        <option value="aset" {{ $type === 'aset' ? 'selected' : '' }}>Aset</option>
+                        @foreach(($allowedTypes ?? ['all' => 'Semua Aktivitas']) as $typeValue => $typeLabel)
+                        <option value="{{ $typeValue }}" {{ $type === $typeValue ? 'selected' : '' }}>{{ $typeLabel }}</option>
+                        @endforeach
                     </select>
                 </div>
 
@@ -61,7 +126,7 @@
                     Filter
                 </button>
                 @if($type !== 'all' || $dateFrom || $dateTo || $search)
-                <a href="{{ route('riwayat.index') }}" class="inline-flex items-center px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                <a href="{{ route('riwayat.index') }}" class="inline-flex items-center px-6 py-2 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
                     </svg>
@@ -77,7 +142,11 @@
         @if($activities->count() > 0)
         <div class="divide-y divide-gray-100">
             @foreach($activities as $activity)
-            <a href="{{ $activity['url'] }}" class="block px-6 py-4 hover:bg-gray-50 transition-colors">
+            @php
+                $canOpen = !empty($activity['url']);
+                $isRead = (bool) ($activity['is_read'] ?? false);
+            @endphp
+            <div class="block px-6 py-4 {{ $isRead ? 'bg-white' : 'bg-blue-50/30' }}">
                 <div class="flex items-start">
                     <div class="flex-shrink-0">
                         <div class="w-12 h-12 rounded-full {{ $activity['icon_bg'] }} flex items-center justify-center">
@@ -107,19 +176,37 @@
                             </div>
                         </div>
                     </div>
-                    <div class="ml-4">
-                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                        </svg>
+                    <div class="ml-4 flex-shrink-0 flex flex-col items-end gap-2">
+                        @if(!$isRead && !empty($activity['id']))
+                        <form method="POST" action="{{ route('akademik.notifikasi.read', $activity['id']) }}">
+                            @csrf
+                            <button type="submit"
+                                    class="inline-flex appearance-none items-center px-2.5 py-1 bg-white border border-blue-200 rounded-md text-xs font-semibold text-blue-600 hover:bg-blue-50 hover:text-blue-700 transition-colors"
+                                    style="background: #ffffff !important; background-color: #ffffff !important; color: #2563eb !important; border: 1px solid #bfdbfe !important;">
+                                Tandai Dibaca
+                            </button>
+                        </form>
+                        @else
+                        <span class="text-xs text-gray-500">Sudah Dibaca</span>
+                        @endif
+
+                        @if($canOpen)
+                        <a href="{{ $activity['url'] }}" class="inline-flex items-center text-xs font-semibold text-blue-600 hover:text-blue-800">
+                            Buka
+                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </a>
+                        @endif
                     </div>
                 </div>
-            </a>
+            </div>
             @endforeach
         </div>
 
         <!-- Pagination -->
         @if($activities->hasPages())
-        <div class="px-6 py-4 border-t border-gray-200">
+        <div class="riwayat-pagination px-6 py-4 border-t border-gray-200">
             {{ $activities->appends(request()->query())->links() }}
         </div>
         @endif
@@ -134,7 +221,7 @@
                 @if($type !== 'all' || $dateFrom || $dateTo || $search)
                     Tidak ada aktivitas yang sesuai dengan filter yang dipilih
                 @else
-                    Belum ada aktivitas yang tercatat di sistem
+                    Belum ada notifikasi aktivitas untuk akun Anda
                 @endif
             </p>
             @if($type !== 'all' || $dateFrom || $dateTo || $search)
@@ -146,21 +233,5 @@
         @endif
     </div>
 
-    <!-- Statistics -->
-    @if($activities->count() > 0)
-    <div class="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl border border-blue-100 p-6">
-        <div class="flex items-center justify-between">
-            <div>
-                <p class="text-sm font-medium text-gray-600">Total Aktivitas Ditampilkan</p>
-                <p class="text-3xl font-bold text-blue-600 mt-1">{{ $activities->total() }}</p>
-            </div>
-            <div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center">
-                <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-                </svg>
-            </div>
-        </div>
-    </div>
-    @endif
 </div>
 @endsection

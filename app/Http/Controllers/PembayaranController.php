@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Pembayaran;
 use App\Models\Siswa;
 use App\Models\JenisPembayaran;
+use App\Models\Notifikasi;
+use App\Models\User;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -38,9 +41,7 @@ class PembayaranController extends Controller
         }
 
         // Filter by Jenis Pembayaran
-        if ($request->filled('jenis_pembayaran_id')) {
-            $query->where('jenis_pembayaran_id', $request->jenis_pembayaran_id);
-        }
+        $this->applyJenisPembayaranFilter($query, $request);
 
         // Filter by Metode Bayar
         if ($request->filled('metode_bayar')) {
@@ -53,10 +54,10 @@ class PembayaranController extends Controller
         }
 
         $pembayaran = $query->orderBy('tanggal_bayar', 'desc')
-            ->paginate(15)
+            ->paginate(10)
             ->withQueryString();
         
-        $jenisPembayaran = JenisPembayaran::orderBy('nama')->get();
+        $jenisPembayaran = $this->getJenisPembayaranOptions();
 
         // Statistics - dengan filter yang sama
         $statsQuery = Pembayaran::query();
@@ -77,9 +78,7 @@ class PembayaranController extends Controller
         if ($request->filled('tanggal_akhir')) {
             $statsQuery->where('tanggal_bayar', '<=', $request->tanggal_akhir);
         }
-        if ($request->filled('jenis_pembayaran_id')) {
-            $statsQuery->where('jenis_pembayaran_id', $request->jenis_pembayaran_id);
-        }
+        $this->applyJenisPembayaranFilter($statsQuery, $request);
         if ($request->filled('metode_bayar')) {
             $statsQuery->where('metode_bayar', $request->metode_bayar);
         }
@@ -108,7 +107,7 @@ class PembayaranController extends Controller
     public function create()
     {
         $siswa = Siswa::where('is_active', true)->orderBy('nama')->get();
-        $jenisPembayaran = JenisPembayaran::orderBy('nama')->get();
+        $jenisPembayaran = $this->getJenisPembayaranOptions();
 
         return view('pembayaran.create', compact('siswa', 'jenisPembayaran'));
     }
@@ -138,10 +137,14 @@ class PembayaranController extends Controller
         ];
         $validated['metode_bayar'] = $metodeMap[$validated['metode_pembayaran']] ?? 'Tunai';
         unset($validated['metode_pembayaran']);
+
+        $validated['jenis_pembayaran_id'] = JenisPembayaran::representativeIdFor((int) $validated['jenis_pembayaran_id'])
+            ?? (int) $validated['jenis_pembayaran_id'];
         
         $validated['user_id'] = Auth::id();
 
-        Pembayaran::create($validated);
+        $pembayaran = Pembayaran::create($validated);
+        $this->notifyPemasukanBaru($pembayaran);
 
         return redirect()->route('pembayaran.index')->with('success', 'Pembayaran berhasil dicatat.');
     }
@@ -157,15 +160,34 @@ class PembayaranController extends Controller
     }
 
     /**
+     * Export detail pembayaran as PDF.
+     */
+    public function exportPdf(string $id)
+    {
+        $pembayaran = Pembayaran::with(['siswa.kelas', 'jenis', 'user'])->findOrFail($id);
+
+        $pdf = Pdf::loadView('pembayaran.pdf.detail', compact('pembayaran'))
+            ->setPaper('a4', 'portrait');
+
+        $safeKode = preg_replace('/[^A-Za-z0-9\-]/', '', (string) $pembayaran->kode_transaksi);
+        $filename = 'bukti-pembayaran-' . ($safeKode ?: (string) $pembayaran->id) . '.pdf';
+
+        return $pdf->download($filename);
+    }
+
+    /**
      * Show the form for editing the specified resource.
      */
     public function edit(string $id)
     {
         $pembayaran = Pembayaran::findOrFail($id);
         $siswa = Siswa::where('is_active', true)->orderBy('nama')->get();
-        $jenisPembayaran = JenisPembayaran::orderBy('nama')->get();
+        $jenisPembayaran = $this->getJenisPembayaranOptions();
 
-        return view('pembayaran.edit', compact('pembayaran', 'siswa', 'jenisPembayaran'));
+        $selectedJenisPembayaranId = JenisPembayaran::representativeIdFor((int) $pembayaran->jenis_pembayaran_id)
+            ?? (int) $pembayaran->jenis_pembayaran_id;
+
+        return view('pembayaran.edit', compact('pembayaran', 'siswa', 'jenisPembayaran', 'selectedJenisPembayaranId'));
     }
 
     /**
@@ -193,7 +215,11 @@ class PembayaranController extends Controller
         $validated['metode_bayar'] = $metodeMap[$validated['metode_pembayaran']] ?? 'Tunai';
         unset($validated['metode_pembayaran']);
 
+        $validated['jenis_pembayaran_id'] = JenisPembayaran::representativeIdFor((int) $validated['jenis_pembayaran_id'])
+            ?? (int) $validated['jenis_pembayaran_id'];
+
         $pembayaran->update($validated);
+        $this->notifyPemasukanDiperbarui($pembayaran);
 
         return redirect()->route('pembayaran.index')->with('success', 'Pembayaran berhasil diperbarui.');
     }
@@ -207,5 +233,111 @@ class PembayaranController extends Controller
         $pembayaran->delete();
 
         return redirect()->route('pembayaran.index')->with('success', 'Pembayaran berhasil dihapus.');
+    }
+
+    private function notifyPemasukanBaru(Pembayaran $pembayaran): void
+    {
+        $pembayaran->loadMissing(['siswa', 'jenis']);
+
+        $recipientIds = User::query()
+            ->whereHas('roles', function ($q) {
+                $q->whereIn('name', ['Admin', 'Bendahara', 'Kepala Sekolah']);
+            })
+            ->pluck('id')
+            ->push((int) auth()->id())
+            ->filter()
+            ->unique();
+
+        $jumlah = 'Rp ' . number_format((float) $pembayaran->jumlah, 0, ',', '.');
+        $namaSiswa = $pembayaran->siswa->nama ?? 'Siswa';
+        $jenis = JenisPembayaran::normalizeNama((string) ($pembayaran->jenis->nama ?? ''));
+
+        foreach ($recipientIds as $recipientId) {
+            Notifikasi::create([
+                'user_id' => (int) $recipientId,
+                'judul' => 'Pemasukan Baru Tercatat',
+                'isi' => sprintf('%s (%s) - %s', $namaSiswa, $jenis, $jumlah),
+                'tipe' => 'pembayaran',
+                'terkait_dengan' => Pembayaran::class,
+                'terkait_id' => $pembayaran->id,
+                'is_read' => false,
+            ]);
+        }
+    }
+
+    private function notifyPemasukanDiperbarui(Pembayaran $pembayaran): void
+    {
+        $pembayaran->loadMissing(['siswa', 'jenis']);
+
+        $recipientIds = User::query()
+            ->whereHas('roles', function ($q) {
+                $q->whereIn('name', ['Admin', 'Bendahara', 'Kepala Sekolah']);
+            })
+            ->pluck('id')
+            ->push((int) auth()->id())
+            ->filter()
+            ->unique();
+
+        $jumlah = 'Rp ' . number_format((float) $pembayaran->jumlah, 0, ',', '.');
+        $namaSiswa = $pembayaran->siswa->nama ?? 'Siswa';
+        $jenis = JenisPembayaran::normalizeNama((string) ($pembayaran->jenis->nama ?? ''));
+
+        foreach ($recipientIds as $recipientId) {
+            Notifikasi::create([
+                'user_id' => (int) $recipientId,
+                'judul' => 'Pemasukan Diperbarui',
+                'isi' => sprintf('%s (%s) - %s', $namaSiswa, $jenis, $jumlah),
+                'tipe' => 'pembayaran',
+                'terkait_dengan' => Pembayaran::class,
+                'terkait_id' => $pembayaran->id,
+                'is_read' => false,
+            ]);
+        }
+    }
+
+    private function getJenisPembayaranOptions()
+    {
+        return JenisPembayaran::dropdownOptions();
+    }
+
+    private function applyJenisPembayaranFilter($query, Request $request): void
+    {
+        if (!$request->filled('jenis_pembayaran_id')) {
+            return;
+        }
+
+        $filterValue = trim((string) $request->input('jenis_pembayaran_id'));
+        if ($filterValue === '') {
+            return;
+        }
+
+        if (ctype_digit($filterValue)) {
+            $jenisIds = JenisPembayaran::equivalentIds((int) $filterValue);
+
+            if (empty($jenisIds)) {
+                $query->whereRaw('1 = 0');
+                return;
+            }
+
+            $query->whereIn('jenis_pembayaran_id', $jenisIds);
+            return;
+        }
+
+        $normalized = JenisPembayaran::normalizeNama($filterValue);
+        $jenisIds = JenisPembayaran::query()
+            ->withTrashed()
+            ->get(['id', 'nama'])
+            ->filter(fn ($item) => JenisPembayaran::normalizeNama((string) $item->nama) === $normalized)
+            ->pluck('id')
+            ->map(fn ($id) => (int) $id)
+            ->values()
+            ->all();
+
+        if (empty($jenisIds)) {
+            $query->whereRaw('1 = 0');
+            return;
+        }
+
+        $query->whereIn('jenis_pembayaran_id', $jenisIds);
     }
 }

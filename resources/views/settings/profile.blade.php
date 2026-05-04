@@ -20,8 +20,8 @@
         
         <!-- Header -->
         <div class="px-8 py-6 bg-gradient-to-r from-slate-50 to-white border-b border-slate-100">
-            <h3 class="text-2xl font-bold text-slate-800">Pengaturan Akun</h3>
-            <p class="mt-1 text-sm text-slate-500">Kelola informasi profil, password, dan pengaturan akun Anda.</p>
+            <h3 class="text-2xl font-bold text-slate-800">Profil Saya</h3>
+            <p class="mt-1 text-sm text-slate-500">Kelola informasi profil dan keamanan akun Anda.</p>
         </div>
 
         <div class="p-8">
@@ -35,6 +35,54 @@
                     @method('PATCH')
 
                     <div class="space-y-6">
+                        <!-- Role -->
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">
+                                Role
+                            </label>
+                            @php
+                                $currentUser = auth()->user();
+                                $roleNames = method_exists($currentUser, 'getRoleNames')
+                                    ? $currentUser->getRoleNames()->values()
+                                    : collect();
+
+                                if ($roleNames->isEmpty() && filled($currentUser?->role)) {
+                                    $roleNames = collect([(string) $currentUser->role]);
+                                }
+
+                                $roleClasses = [
+                                    'Admin' => 'bg-gradient-to-r from-purple-100 to-indigo-100 text-purple-800 border-2 border-purple-200',
+                                    'Bendahara' => 'bg-gradient-to-r from-blue-100 to-cyan-100 text-blue-800 border-2 border-blue-200',
+                                    'Kepala Sekolah' => 'bg-gradient-to-r from-green-100 to-emerald-100 text-green-800 border-2 border-green-200',
+                                    'Guru' => 'bg-gradient-to-r from-amber-100 to-yellow-100 text-amber-800 border-2 border-amber-200',
+                                    'Siswa' => 'bg-gradient-to-r from-teal-100 to-emerald-100 text-teal-800 border-2 border-teal-200',
+                                ];
+                            @endphp
+                            <div class="flex flex-wrap items-center gap-2">
+                                @forelse($roleNames as $roleName)
+                                    @php
+                                        $roleStyle = $roleClasses[(string) $roleName] ?? 'bg-gradient-to-r from-slate-100 to-gray-100 text-slate-800 border-2 border-slate-200';
+                                    @endphp
+                                    <span class="inline-flex items-center px-4 py-2.5 rounded-xl text-sm font-semibold {{ $roleStyle }}">
+                                        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                        </svg>
+                                        {{ $roleName }}
+                                    </span>
+                                @empty
+                                    <span class="inline-flex items-center px-4 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-slate-100 to-gray-100 text-slate-700 border-2 border-slate-200">
+                                        Belum ada role
+                                    </span>
+                                @endforelse
+                            </div>
+                            <p class="mt-2 text-xs text-slate-500 flex items-center">
+                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                                </svg>
+                                Role akun Anda menentukan akses ke berbagai fitur dan menu dalam sistem.
+                            </p>
+                        </div>
+
                         <!-- Nama -->
                         <div>
                             <label for="name" class="block text-sm font-semibold text-slate-700 mb-2">

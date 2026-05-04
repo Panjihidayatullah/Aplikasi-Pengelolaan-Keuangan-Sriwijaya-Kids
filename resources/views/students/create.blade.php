@@ -109,6 +109,20 @@
                         @enderror
                     </div>
 
+                    <!-- Email -->
+                    <div>
+                        <label for="email" class="block text-sm font-semibold text-slate-700 mb-2">Email Siswa (Login)</label>
+                        <input type="email" name="email" id="email" value="{{ old('email') }}" class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all duration-200 @error('email') border-red-500 @enderror" placeholder="siswa@email.com">
+                        @error('email')
+                            <p class="mt-2 text-sm text-red-600 flex items-center">
+                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                </svg>
+                                {{ $message }}
+                            </p>
+                        @enderror
+                    </div>
+
                     <!-- Alamat -->
                     <div class="md:col-span-2">
                         <label for="alamat" class="block text-sm font-semibold text-slate-700 mb-2">Alamat</label>
@@ -121,6 +135,24 @@
                                 {{ $message }}
                             </p>
                         @enderror
+                    </div>
+
+                    <!-- Akun Login -->
+                    <div class="md:col-span-2 mt-2 rounded-xl border border-blue-100 bg-blue-50 p-4">
+                        <h3 class="text-base font-semibold text-blue-900">Akun Login Siswa</h3>
+                        <p class="mt-1 text-xs text-blue-700">Jika dicentang, sistem membuat akun login untuk siswa. Jika password dikosongkan, password awal akan memakai NIS.</p>
+                        <input type="hidden" name="buat_akun_login" value="0">
+                        <label class="mt-3 inline-flex items-center">
+                            <input type="checkbox" name="buat_akun_login" value="1" {{ old('buat_akun_login', '1') ? 'checked' : '' }} class="rounded border-slate-300 text-blue-600 focus:ring-4 focus:ring-blue-500/10 w-5 h-5">
+                            <span class="ml-3 text-sm font-medium text-slate-700">Buat akun login siswa sekarang</span>
+                        </label>
+                        <div class="mt-3 max-w-md">
+                            <label for="password_akun" class="block text-sm font-semibold text-slate-700 mb-2">Password Awal (Opsional)</label>
+                            <input type="text" name="password_akun" id="password_akun" value="{{ old('password_akun') }}" class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all duration-200 @error('password_akun') border-red-500 @enderror" placeholder="Kosongkan untuk pakai NIS">
+                            @error('password_akun')
+                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
                     </div>
 
                     <!-- Data Orang Tua -->

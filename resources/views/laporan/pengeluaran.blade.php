@@ -5,19 +5,33 @@
 
 @section('content')
 <div class="space-y-6">
+    @php
+        $selectedJenisPengeluaranId = \App\Models\JenisPengeluaran::representativeIdFor((int) request('jenis_pengeluaran_id'))
+            ?? request('jenis_pengeluaran_id');
+    @endphp
+
     <div class="flex items-center justify-between">
         <div>
             <h2 class="text-2xl font-bold text-gray-900">Laporan Pengeluaran</h2>
             <p class="mt-1 text-sm text-gray-600">Rincian pengeluaran sekolah</p>
         </div>
-        <a href="{{ route('laporan.export.pdf', ['type' => 'pengeluaran', 'start_date' => request('start_date', now()->startOfMonth()->format('Y-m-d')), 'end_date' => request('end_date', now()->endOfMonth()->format('Y-m-d')), 'jenis_pengeluaran_id' => request('jenis_pengeluaran_id')]) }}" 
-           target="_blank"
-           class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 inline-flex items-center">
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
-            </svg>
-            Export PDF
-        </a>
+        <div class="flex space-x-2">
+            <a href="{{ route('laporan.export.pdf', ['type' => 'pengeluaran', 'start_date' => request('start_date', now()->startOfMonth()->format('Y-m-d')), 'end_date' => request('end_date', now()->endOfMonth()->format('Y-m-d')), 'jenis_pengeluaran_id' => request('jenis_pengeluaran_id')]) }}" 
+               target="_blank"
+               class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 inline-flex items-center">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                </svg>
+                Export PDF
+            </a>
+            <a href="{{ route('laporan.export.excel', ['type' => 'pengeluaran', 'start_date' => request('start_date', now()->startOfMonth()->format('Y-m-d')), 'end_date' => request('end_date', now()->endOfMonth()->format('Y-m-d')), 'jenis_pengeluaran_id' => request('jenis_pengeluaran_id')]) }}" 
+               class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 inline-flex items-center">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+                Export Excel
+            </a>
+        </div>
     </div>
 
     <!-- Filter Section -->
@@ -60,7 +74,7 @@
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                         <option value="">Semua Jenis</option>
                         @foreach($jenisPengeluaran as $jenis)
-                            <option value="{{ $jenis->id }}" {{ request('jenis_pengeluaran_id') == $jenis->id ? 'selected' : '' }}>
+                            <option value="{{ $jenis->id }}" {{ (string) $selectedJenisPengeluaranId === (string) $jenis->id ? 'selected' : '' }}>
                                 {{ $jenis->nama }}
                             </option>
                         @endforeach
@@ -112,7 +126,7 @@
                 <tr>
                     <td class="px-6 py-4 text-sm">{{ \Carbon\Carbon::parse($item->tanggal)->format('d/m/Y') }}</td>
                     <td class="px-6 py-4 text-sm">{{ $item->keterangan ?? '-' }}</td>
-                    <td class="px-6 py-4 text-sm">{{ $item->jenis->nama ?? '-' }}</td>
+                    <td class="px-6 py-4 text-sm">{{ $item->jenis ? \App\Models\JenisPengeluaran::normalizeNama($item->jenis->nama) : '-' }}</td>
                     <td class="px-6 py-4 text-sm font-medium text-red-600">{{ format_rupiah($item->jumlah) }}</td>
                 </tr>
                 @empty

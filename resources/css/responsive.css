@@ -1,0 +1,144 @@
+/* Mobile-First Responsive Enhancements */
+
+/* Ensure minimum touch target size (44x44px for better mobile UX) */
+@layer utilities {
+    .touch-target {
+        min-width: 44px;
+        min-height: 44px;
+    }
+    
+    /* Better mobile scrolling */
+    .mobile-scroll {
+        -webkit-overflow-scrolling: touch;
+        scroll-behavior: smooth;
+    }
+}
+
+/* Mobile Optimizations */
+@media (max-width: 640px) {
+    /* Reduce padding on mobile */
+    .mobile-compact {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+    
+    /* Stack buttons vertically on mobile */
+    .mobile-stack > * {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    /* Adjust font sizes for better readability */
+    h1 {
+        font-size: 1.5rem !important;
+    }
+    
+    h2 {
+        font-size: 1.25rem !important;
+    }
+    
+    /* Make tables horizontally scrollable */
+    .table-responsive {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Reduce card padding on mobile */
+    .card-mobile {
+        padding: 1rem !important;
+    }
+}
+
+/* Tablet Optimizations */
+@media (min-width: 641px) and (max-width: 1024px) {
+    /* Adjust grid layouts for tablet */
+    .tablet-grid-2 {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+/* Hide elements based on screen size */
+@media (max-width: 768px) {
+    .hide-mobile {
+        display: none !important;
+    }
+}
+
+@media (min-width: 769px) {
+    .hide-desktop {
+        display: none !important;
+    }
+}
+
+/* Better form inputs on mobile */
+@media (max-width: 640px) {
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="number"],
+    input[type="date"],
+    select,
+    textarea {
+        font-size: 16px !important; /* Prevents zoom on iOS */
+    }
+}
+
+/* Improve button spacing on mobile */
+@media (max-width: 640px) {
+    .btn-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .btn-group > * {
+        width: 100%;
+    }
+}
+
+/* Fix sidebar overlay on mobile */
+@media (max-width: 1024px) {
+    .sidebar-overlay {
+        position: fixed;
+        inset: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 40;
+    }
+}
+
+/* Improve pagination on mobile */
+@media (max-width: 640px) {
+    .pagination {
+        font-size: 0.875rem;
+    }
+    
+    .pagination a,
+    .pagination span {
+        padding: 0.5rem 0.75rem !important;
+    }
+}
+
+/* Better modal on mobile */
+@media (max-width: 640px) {
+    .modal-content {
+        margin: 1rem;
+        min-height: auto;
+    }
+}
+
+/* Improve stats cards on mobile */
+@media (max-width: 640px) {
+    .stats-card {
+        padding: 1rem !important;
+    }
+    
+    .stats-card h3 {
+        font-size: 0.875rem !important;
+    }
+    
+    .stats-card .value {
+        font-size: 1.25rem !important;
+    }
+}

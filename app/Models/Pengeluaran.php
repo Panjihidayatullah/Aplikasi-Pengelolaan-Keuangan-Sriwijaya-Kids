@@ -42,4 +42,12 @@ class Pengeluaran extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    /**
+     * Get salary record when this expense is teacher payroll.
+     */
+    public function gajiGuru()
+    {
+        return $this->hasOne(GajiGuru::class, 'pengeluaran_id');
+    }
 }

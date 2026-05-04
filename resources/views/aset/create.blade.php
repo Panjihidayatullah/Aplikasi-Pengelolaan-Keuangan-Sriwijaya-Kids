@@ -49,11 +49,11 @@
                                 required
                                 class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all duration-200 bg-white @error('kategori') border-red-500 @enderror">
                             <option value="">Pilih Kategori</option>
-                            <option value="elektronik" {{ old('kategori') == 'elektronik' ? 'selected' : '' }}>🖥️ Elektronik</option>
-                            <option value="furniture" {{ old('kategori') == 'furniture' ? 'selected' : '' }}>🪑 Furniture</option>
-                            <option value="kendaraan" {{ old('kategori') == 'kendaraan' ? 'selected' : '' }}>🚗 Kendaraan</option>
-                            <option value="gedung" {{ old('kategori') == 'gedung' ? 'selected' : '' }}>🏢 Gedung</option>
-                            <option value="lainnya" {{ old('kategori') == 'lainnya' ? 'selected' : '' }}>📦 Lainnya</option>
+                            <option value="Elektronik" {{ old('kategori') == 'Elektronik' ? 'selected' : '' }}>Elektronik</option>
+                            <option value="Furniture" {{ old('kategori') == 'Furniture' ? 'selected' : '' }}>Furniture</option>
+                            <option value="Kendaraan" {{ old('kategori') == 'Kendaraan' ? 'selected' : '' }}>Kendaraan</option>
+                            <option value="Bangunan" {{ old('kategori') == 'Bangunan' ? 'selected' : '' }}>Gedung</option>
+                            <option value="Lainnya" {{ old('kategori') == 'Lainnya' ? 'selected' : '' }}>Lainnya</option>
                         </select>
                         @error('kategori')
                             <p class="mt-2 text-sm text-red-600 flex items-center">
@@ -74,9 +74,9 @@
                                 id="kondisi" 
                                 required
                                 class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all duration-200 bg-white @error('kondisi') border-red-500 @enderror">
-                            <option value="baik" {{ old('kondisi', 'baik') == 'baik' ? 'selected' : '' }}>✅ Baik</option>
-                            <option value="rusak ringan" {{ old('kondisi') == 'rusak ringan' ? 'selected' : '' }}>⚠️ Rusak Ringan</option>
-                            <option value="rusak berat" {{ old('kondisi') == 'rusak berat' ? 'selected' : '' }}>❌ Rusak Berat</option>
+                            <option value="baik" {{ old('kondisi', 'baik') == 'baik' ? 'selected' : '' }}>Baik</option>
+                            <option value="rusak ringan" {{ old('kondisi') == 'rusak ringan' ? 'selected' : '' }}>Rusak Ringan</option>
+                            <option value="rusak berat" {{ old('kondisi') == 'rusak berat' ? 'selected' : '' }}>Rusak Berat</option>
                         </select>
                         @error('kondisi')
                             <p class="mt-2 text-sm text-red-600 flex items-center">

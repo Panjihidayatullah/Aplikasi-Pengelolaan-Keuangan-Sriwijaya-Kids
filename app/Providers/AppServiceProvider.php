@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\Notifikasi;
+use App\Models\User;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -46,91 +48,97 @@ class AppServiceProvider extends ServiceProvider
     protected function shareNotificationsData(): void
     {
         view()->composer('layouts.topbar', function ($view) {
-            if (auth()->check()) {
-                try {
-                    // Cache notifications for 5 minutes to improve performance
-                    $notifications = cache()->remember('topbar_notifications', 300, function () {
-                        $notifications = collect();
+            if (!auth()->check()) {
+                $view->with('recentNotifications', collect());
+                $view->with('notificationCount', 0);
+                return;
+            }
 
-                        // Get latest payments (last 5)
-                        $latestPayments = \App\Models\Pembayaran::with(['siswa', 'jenis'])
-                            ->latest()
-                            ->take(5)
-                            ->get()
-                            ->map(function ($payment) {
-                                return [
-                                    'type' => 'pembayaran',
-                                    'title' => 'Pembayaran Baru Diterima',
-                                    'description' => ($payment->siswa->nama ?? 'Siswa') . ' - ' . ($payment->jenis->nama ?? 'Pembayaran'),
-                                    'amount' => 'Rp ' . number_format($payment->jumlah, 0, ',', '.'),
-                                    'time' => $payment->created_at,
-                                    'url' => route('pembayaran.show', $payment->id),
-                                    'icon_bg' => 'bg-green-100',
-                                    'icon_color' => 'text-green-600',
-                                    'icon' => 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
-                                ];
-                            });
+            try {
+                /** @var User $user */
+                $user = auth()->user();
+                $limit = $this->notificationLimitByRole($user);
 
-                        // Get latest students (last 5)
-                        $latestStudents = \App\Models\Siswa::with('kelas')
-                            ->latest()
-                            ->take(5)
-                            ->get()
-                            ->map(function ($student) {
-                                return [
-                                    'type' => 'siswa',
-                                    'title' => 'Siswa Baru Terdaftar',
-                                    'description' => $student->nama . ' - ' . ($student->kelas->nama_kelas ?? 'Belum ada kelas'),
-                                    'amount' => 'NIS: ' . $student->nis,
-                                    'time' => $student->created_at,
-                                    'url' => route('siswa.show', $student->id),
-                                    'icon_bg' => 'bg-blue-100',
-                                    'icon_color' => 'text-blue-600',
-                                    'icon' => 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z'
-                                ];
-                            });
+                $notifications = Notifikasi::query()
+                    ->where('user_id', $user->id)
+                    ->latest('created_at')
+                    ->limit($limit)
+                    ->get()
+                    ->map(fn (Notifikasi $notifikasi) => $this->transformTopbarNotification($notifikasi));
 
-                        // Get latest expenses (last 5)
-                        $latestExpenses = \App\Models\Pengeluaran::with('jenis')
-                            ->latest()
-                            ->take(5)
-                            ->get()
-                            ->map(function ($expense) {
-                                return [
-                                    'type' => 'pengeluaran',
-                                    'title' => 'Pengeluaran Baru Dicatat',
-                                    'description' => $expense->keterangan ?? 'Pengeluaran',
-                                    'amount' => 'Rp ' . number_format($expense->jumlah, 0, ',', '.'),
-                                    'time' => $expense->created_at,
-                                    'url' => route('pengeluaran.show', $expense->id),
-                                    'icon_bg' => 'bg-red-100',
-                                    'icon_color' => 'text-red-600',
-                                    'icon' => 'M13 17h8m0 0V9m0 8l-8-8-4 4-6-6'
-                                ];
-                            });
+                $notificationCount = Notifikasi::query()
+                    ->where('user_id', $user->id)
+                    ->where('is_read', false)
+                    ->count();
 
-                        // Merge and sort by created_at
-                        return $notifications
-                            ->merge($latestPayments)
-                            ->merge($latestStudents)
-                            ->merge($latestExpenses)
-                            ->sortByDesc('time')
-                            ->take(10)
-                            ->values();
-                    });
-
-                    $view->with('recentNotifications', $notifications);
-                    $view->with('notificationCount', $notifications->count());
-                } catch (\Exception $e) {
-                    // If any error occurs, show empty notifications
-                    $view->with('recentNotifications', collect());
-                    $view->with('notificationCount', 0);
-                }
-            } else {
+                $view->with('recentNotifications', $notifications);
+                $view->with('notificationCount', $notificationCount);
+            } catch (\Exception $e) {
                 $view->with('recentNotifications', collect());
                 $view->with('notificationCount', 0);
             }
         });
+    }
+
+    private function notificationLimitByRole(User $user): int
+    {
+        if ($user->hasRole('Admin')) {
+            return 12;
+        }
+
+        if ($user->hasRole('Kepala Sekolah')) {
+            return 10;
+        }
+
+        if ($user->hasRole('Bendahara')) {
+            return 8;
+        }
+
+        if ($user->hasRole('Guru')) {
+            return 7;
+        }
+
+        if ($user->hasRole('Siswa')) {
+            return 5;
+        }
+
+        return 6;
+    }
+
+    private function transformTopbarNotification(Notifikasi $notifikasi): array
+    {
+        [$iconBg, $iconColor, $iconPath] = $this->iconForNotificationType((string) $notifikasi->tipe);
+
+        return [
+            'type' => $notifikasi->tipe ?: 'umum',
+            'title' => $notifikasi->judul,
+            'description' => $notifikasi->isi,
+            'amount' => $notifikasi->is_read ? 'Sudah dibaca' : 'Belum dibaca',
+            'time' => $notifikasi->created_at,
+            'url' => $this->resolveNotificationUrl($notifikasi),
+            'icon_bg' => $iconBg,
+            'icon_color' => $iconColor,
+            'icon' => $iconPath,
+        ];
+    }
+
+    private function iconForNotificationType(string $type): array
+    {
+        return match ($type) {
+            'tugas' => ['bg-cyan-100', 'text-cyan-600', 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586A2 2 0 0114 3.586L18.414 8A2 2 0 0119 9.414V19a2 2 0 01-2 2z'],
+            'nilai' => ['bg-green-100', 'text-green-600', 'M9 17v-2m3 2v-4m3 4V9m3 10H6a2 2 0 01-2-2V7a2 2 0 012-2h12a2 2 0 012 2v10a2 2 0 01-2 2z'],
+            'pengumuman' => ['bg-amber-100', 'text-amber-600', 'M11 5.882V19.5M18 8.5v6a1 1 0 01-1.447.894L12 13H8v-4h4l4.553-2.394A1 1 0 0118 8.5z'],
+            default => ['bg-gray-100', 'text-gray-600', 'M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9'],
+        };
+    }
+
+    private function resolveNotificationUrl(Notifikasi $notifikasi): string
+    {
+        $type = $notifikasi->tipe ?: 'all';
+
+        return route('riwayat.index', [
+            'type' => $type,
+        ]);
     }
 
     /**

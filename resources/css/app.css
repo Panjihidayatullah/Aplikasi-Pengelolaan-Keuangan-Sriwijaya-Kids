@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@import './responsive.css';
 
 @source '../views';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
@@ -138,4 +139,59 @@
     body {
         @apply bg-background text-foreground;
     }
+}
+
+/* Keep all interactive button surfaces light and consistent with the current background theme. */
+button.bg-white {
+    background-color: #f8fbff !important;
+    border-color: #dbeafe !important;
+    color: #1d4ed8;
+}
+
+button.bg-white:hover,
+button.bg-white:focus,
+button.bg-white:active {
+    background-color: #eef5ff !important;
+}
+
+button.bg-black,
+button.bg-gray-800,
+button.bg-gray-900,
+button.bg-slate-800,
+button.bg-slate-900,
+button.dark\:bg-gray-700,
+button.dark\:bg-gray-800,
+button.dark\:bg-gray-900,
+button.dark\:bg-slate-800,
+button.dark\:bg-slate-900,
+button.hover\:bg-gray-800:hover,
+button.hover\:bg-gray-900:hover,
+button.hover\:bg-slate-800:hover,
+button.hover\:bg-slate-900:hover,
+button.dark\:hover\:bg-gray-800:hover,
+button.dark\:hover\:bg-gray-900:hover,
+button.dark\:hover\:bg-slate-800:hover,
+button.dark\:hover\:bg-slate-900:hover {
+    background-color: #f8fbff !important;
+    border-color: #bfdbfe !important;
+    color: #1d4ed8 !important;
+}
+
+button.bg-black:hover,
+button.bg-gray-800:hover,
+button.bg-gray-900:hover,
+button.bg-slate-800:hover,
+button.bg-slate-900:hover,
+button.dark\:bg-gray-700:hover,
+button.dark\:bg-gray-800:hover,
+button.dark\:bg-gray-900:hover,
+button.dark\:bg-slate-800:hover,
+button.dark\:bg-slate-900:hover {
+    background-color: #eef5ff !important;
+}
+
+/* Hide browser default password reveal and clear buttons (Microsoft Edge / IE) */
+input::-ms-reveal,
+input::-ms-clear {
+    display: none !important;
 }

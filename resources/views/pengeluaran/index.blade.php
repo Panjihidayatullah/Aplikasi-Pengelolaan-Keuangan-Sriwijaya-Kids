@@ -5,6 +5,11 @@
 
 @section('content')
 <div class="space-y-6">
+    @php
+        $selectedJenisPengeluaranId = \App\Models\JenisPengeluaran::representativeIdFor((int) request('jenis_pengeluaran_id'))
+            ?? request('jenis_pengeluaran_id');
+    @endphp
+
     <!-- Header -->
     <div class="flex items-center justify-between">
         <div>
@@ -63,7 +68,7 @@
                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent text-sm">
                             <option value="">Semua Jenis</option>
                             @foreach($jenisPengeluaran as $jenis)
-                                <option value="{{ $jenis->id }}" {{ request('jenis_pengeluaran_id') == $jenis->id ? 'selected' : '' }}>
+                                <option value="{{ $jenis->id }}" {{ (string) $selectedJenisPengeluaranId === (string) $jenis->id ? 'selected' : '' }}>
                                     {{ $jenis->nama }}
                                 </option>
                             @endforeach
@@ -162,7 +167,7 @@
     <!-- Table -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
+            <table class="min-w-full divide-y divide-gray-200" data-slider-per-page="10">
                 <thead class="bg-gray-50">
                     <tr>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tanggal</th>
@@ -178,7 +183,7 @@
                     <tr class="hover:bg-gray-50">
                         <td class="px-6 py-4 whitespace-nowrap text-sm">{{ $item->tanggal ? \Carbon\Carbon::parse($item->tanggal)->format('d M Y') : '-' }}</td>
                         <td class="px-6 py-4 text-sm">{{ $item->keterangan ?? '-' }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm">{{ $item->jenis->nama ?? '-' }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm">{{ $item->jenis ? \App\Models\JenisPengeluaran::normalizeNama($item->jenis->nama) : '-' }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-red-600">{{ format_rupiah($item->jumlah ?? 0) }}</td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             @if($item->status == 'Disetujui')
@@ -189,8 +194,14 @@
                                 <span class="px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800">Ditolak</span>
                             @endif
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
-                            <a href="{{ route('pengeluaran.show', $item->id ?? 1) }}" class="text-indigo-600 hover:text-indigo-900">Detail</a>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm space-x-3">
+                            <a href="{{ route('pengeluaran.show', $item->id ?? 1) }}" class="text-indigo-600 hover:text-indigo-900 font-medium">Detail</a>
+                            <a href="{{ route('pengeluaran.edit', $item->id ?? 1) }}" class="text-amber-600 hover:text-amber-900 font-medium">Edit</a>
+                            <form action="{{ route('pengeluaran.destroy', $item->id ?? 1) }}" method="POST" class="inline-block" onsubmit="return confirm('Apakah Anda yakin ingin menghapus pengeluaran ini?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="text-red-600 hover:text-red-900 font-medium">Hapus</button>
+                            </form>
                         </td>
                     </tr>
                     @empty

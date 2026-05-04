@@ -149,7 +149,7 @@
                         <td class="text-center">{{ $no++ }}</td>
                         <td class="text-center">{{ \Carbon\Carbon::parse($item->tanggal)->format('d/m/Y') }}</td>
                         <td class="text-left">{{ $item->kode_transaksi }}</td>
-                        <td class="text-left">{{ $item->jenis->nama ?? '-' }}</td>
+                        <td class="text-left">{{ $item->jenis ? \App\Models\JenisPengeluaran::normalizeNama($item->jenis->nama) : '-' }}</td>
                         <td class="text-left">{{ \Illuminate\Support\Str::limit($item->keterangan, 50) }}</td>
                         <td class="text-right">{{ number_format($item->jumlah, 0, ',', '.') }}</td>
                         <td class="text-left">{{ $item->user->name ?? '-' }}</td>
