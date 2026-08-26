@@ -8,7 +8,7 @@
 
 ## 📊 OVERVIEW IMPLEMENTASI
 
-Modul akademik telah berhasil diintegrasikan ke dalam sistem Sriwijaya Kids dengan 12 tabel database, 11 model Eloquent, 6 controller, 40+ permission, dan 1 role baru.
+Modul akademik telah berhasil diintegrasikan ke dalam sistem Educlass dengan 12 tabel database, 11 model Eloquent, 6 controller, 40+ permission, dan 1 role baru.
 
 ### ✅ YANG SUDAH DIKERJAKAN
 

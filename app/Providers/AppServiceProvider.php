@@ -59,17 +59,24 @@ class AppServiceProvider extends ServiceProvider
                 $user = auth()->user();
                 $limit = $this->notificationLimitByRole($user);
 
-                $notifications = Notifikasi::query()
-                    ->where('user_id', $user->id)
-                    ->latest('created_at')
-                    ->limit($limit)
-                    ->get()
-                    ->map(fn (Notifikasi $notifikasi) => $this->transformTopbarNotification($notifikasi));
+                $cacheKey = 'topbar_notif_data_' . $user->id;
+                $cacheCountKey = 'topbar_notif_count_' . $user->id;
 
-                $notificationCount = Notifikasi::query()
-                    ->where('user_id', $user->id)
-                    ->where('is_read', false)
-                    ->count();
+                $notifications = \Illuminate\Support\Facades\Cache::remember($cacheKey, now()->addMinutes(1), function () use ($user, $limit) {
+                    return Notifikasi::query()
+                        ->where('user_id', $user->id)
+                        ->latest('created_at')
+                        ->limit($limit)
+                        ->get()
+                        ->map(fn (Notifikasi $notifikasi) => $this->transformTopbarNotification($notifikasi));
+                });
+
+                $notificationCount = \Illuminate\Support\Facades\Cache::remember($cacheCountKey, now()->addMinutes(1), function () use ($user) {
+                    return Notifikasi::query()
+                        ->where('user_id', $user->id)
+                        ->where('is_read', false)
+                        ->count();
+                });
 
                 $view->with('recentNotifications', $notifications);
                 $view->with('notificationCount', $notificationCount);

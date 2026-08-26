@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1146 768" role="img" aria-label="Educlass logo">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#09162e"/>
+      <stop offset="0.45" stop-color="#0f4b6e"/>
+      <stop offset="1" stop-color="#1d5cc8"/>
+    </linearGradient>
+    <radialGradient id="glow-top" cx="0.58" cy="0.18" r="0.36">
+      <stop offset="0" stop-color="#facc15" stop-opacity="0.52"/>
+      <stop offset="1" stop-color="#facc15" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="dot-blue" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#22d3ee" stop-opacity="0.86"/>
+      <stop offset="1" stop-color="#22d3ee" stop-opacity="0.05"/>
+    </radialGradient>
+    <radialGradient id="dot-purple" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#7c3aed" stop-opacity="0.86"/>
+      <stop offset="1" stop-color="#7c3aed" stop-opacity="0.08"/>
+    </radialGradient>
+    <linearGradient id="roof" x1="295" y1="85" x2="446" y2="185" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#a855f7"/>
+      <stop offset="1" stop-color="#7c3aed"/>
+    </linearGradient>
+    <linearGradient id="cap-body" x1="286" y1="107" x2="448" y2="287" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#1463c9"/>
+      <stop offset="1" stop-color="#0c4a99"/>
+    </linearGradient>
+    <linearGradient id="book-left" x1="247" y1="347" x2="497" y2="491" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0f46c4"/>
+      <stop offset="1" stop-color="#0b63da"/>
+    </linearGradient>
+    <linearGradient id="book-right" x1="579" y1="347" x2="867" y2="491" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#52a9ff"/>
+      <stop offset="1" stop-color="#0c5bc9"/>
+    </linearGradient>
+    <linearGradient id="text-left" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0c4fa8"/>
+      <stop offset="1" stop-color="#0f72cf"/>
+    </linearGradient>
+    <linearGradient id="text-right" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#1dcf8a"/>
+      <stop offset="1" stop-color="#25e05a"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1146" height="768" fill="url(#bg)"/>
+  <rect x="0" y="0" width="1146" height="50" fill="#0b1220" opacity="0.82"/>
+  <circle cx="545" cy="160" r="230" fill="url(#glow-top)"/>
+
+  <circle cx="918" cy="467" r="65" fill="url(#dot-blue)"/>
+  <circle cx="995" cy="510" r="85" fill="#8b5cf6" opacity="0.44"/>
+  <circle cx="856" cy="503" r="52" fill="url(#dot-purple)"/>
+  <circle cx="1005" cy="520" r="10" fill="#8b5cf6" opacity="0.2"/>
+
+  <path d="M0 650C132 592 228 582 334 604c82 18 151 53 236 74 109 27 225 28 364 8 84-12 155-40 212-73v155H0Z" fill="#12315f" opacity="0.92"/>
+  <path d="M0 697C136 618 236 615 342 646c84 25 159 74 268 74s184-31 294-60c96-25 173-77 242-118v226H0Z" fill="#1e4b95" opacity="0.58"/>
+
+  <g transform="translate(124 126)">
+    <rect x="0" y="0" width="304" height="316" rx="36" fill="#ffffff" opacity="0.10"/>
+    <path d="M108 94 L152 58 L196 94" fill="none" stroke="url(#roof)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M122 100 H186 V182 C186 190 180 196 172 196 H136 C128 196 122 190 122 182 Z" fill="url(#cap-body)"/>
+    <circle cx="154" cy="148" r="16" fill="#ffffff" opacity="0.95"/>
+    <circle cx="154" cy="148" r="5.5" fill="#2b2b2b"/>
+    <path d="M130 175 C143 167 165 167 178 175" fill="none" stroke="#f59e0b" stroke-width="6" stroke-linecap="round"/>
+    <path d="M201 100 L201 124 L222 148" fill="none" stroke="#0f5fd2" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="222" cy="148" r="19" fill="#0f5fd2"/>
+    <path d="M214 166 L230 166 L222 208 Z" fill="#0f5fd2"/>
+  </g>
+
+  <g transform="translate(238 348)">
+    <path d="M0 84 C62 58 116 54 172 66C211 74 243 94 271 124C299 94 331 74 370 66C426 54 480 58 542 84V150C481 123 428 117 380 126C338 133 302 154 271 188C240 154 204 133 162 126C114 117 61 123 0 150Z" fill="url(#book-left)"/>
+    <path d="M271 124C299 94 331 74 370 66C426 54 480 58 542 84" fill="none" stroke="url(#book-right)" stroke-width="28" stroke-linecap="round"/>
+    <path d="M0 84 C62 58 116 54 172 66C211 74 243 94 271 124" fill="none" stroke="#ffffff" stroke-width="8" stroke-linecap="round" opacity="0.88"/>
+    <path d="M0 150C61 123 114 117 162 126C204 133 240 154 271 188" fill="none" stroke="#ffffff" stroke-width="8" stroke-linecap="round" opacity="0.82"/>
+    <path d="M271 188C302 154 338 133 380 126C428 117 481 123 542 150" fill="none" stroke="#ffffff" stroke-width="8" stroke-linecap="round" opacity="0.82"/>
+    <path d="M271 124V188" fill="none" stroke="#ffffff" stroke-width="10" stroke-linecap="round" opacity="0.95"/>
+  </g>
+
+  <text x="694" y="295" text-anchor="start" font-family="Arial, Helvetica, sans-serif" font-size="118" font-weight="900" letter-spacing="1" fill="#ffffff">EDUCLASS</text>
+  <text x="694" y="355" text-anchor="start" font-family="Arial, Helvetica, sans-serif" font-size="33" font-weight="700" fill="#ffffff">Sistem belajar dan administrasi yang modern</text>
+</svg>

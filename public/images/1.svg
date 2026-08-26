@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Educlass login background">
+  <defs>
+    <linearGradient id="login-main" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0f172a"/>
+      <stop offset="0.5" stop-color="#164e63"/>
+      <stop offset="1" stop-color="#2563eb"/>
+    </linearGradient>
+    <radialGradient id="login-glow" cx="0.55" cy="0.28" r="0.75">
+      <stop offset="0" stop-color="#f59e0b" stop-opacity="0.38"/>
+      <stop offset="0.58" stop-color="#f59e0b" stop-opacity="0.1"/>
+      <stop offset="1" stop-color="#f59e0b" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1600" height="1000" fill="url(#login-main)"/>
+  <circle cx="890" cy="230" r="360" fill="url(#login-glow)"/>
+  <path d="M0 790c180-68 330-72 490-18s300 100 500 100 330-34 610-186v314H0Z" fill="#0f172a" opacity="0.55"/>
+  <g transform="translate(220 140)">
+    <rect x="0" y="0" width="420" height="500" rx="44" fill="#ffffff" opacity="0.08"/>
+    <path d="M96 128 210 40l114 88" fill="none" stroke="#a855f7" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M124 136v154c0 12 10 22 22 22h128c12 0 22-10 22-22V136" fill="none" stroke="#22d3ee" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M136 252c22-10 48-16 74-16s52 6 74 16" fill="none" stroke="#fbbf24" stroke-width="14" stroke-linecap="round"/>
+    <circle cx="210" cy="178" r="44" fill="#fff7ed" opacity="0.92"/>
+    <circle cx="210" cy="178" r="12" fill="#0f172a" opacity="0.86"/>
+  </g>
+  <text x="1080" y="340" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="114" font-weight="900" fill="#ffffff" letter-spacing="5">EDUCLASS</text>
+  <text x="1080" y="425" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="40" font-weight="600" fill="#e0f2fe">Sistem belajar dan administrasi yang modern</text>
+  <g opacity="0.35">
+    <circle cx="1210" cy="560" r="110" fill="#22d3ee"/>
+    <circle cx="1340" cy="660" r="150" fill="#f59e0b"/>
+    <circle cx="980" cy="690" r="90" fill="#8b5cf6"/>
+  </g>
+</svg>

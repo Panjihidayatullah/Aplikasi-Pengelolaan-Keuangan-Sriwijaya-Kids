@@ -40,7 +40,7 @@
                 : '';
         @endphp
 
-        <div class="bg-white rounded-xl shadow p-6">
+        <div class="bg-white rounded-xl shadow p-6" style="overflow: visible;">
             <p class="text-sm font-semibold text-gray-800 mb-4">Pilih Siswa</p>
             <div class="relative" id="siswa-search-wrapper">
                 <label class="block text-xs font-medium text-gray-500 mb-1.5">Cari Nama / NIS Siswa</label>

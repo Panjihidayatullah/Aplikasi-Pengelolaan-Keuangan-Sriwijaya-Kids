@@ -1,6 +1,6 @@
 # 📊 Status Implementasi Sistem Keuangan Sekolah
 
-**Project:** Sistem Pengelolaan Keuangan Sekolah Kids Sriwijaya  
+**Project:** Sistem Pengelolaan Keuangan Educlass
 **Date:** February 27, 2026  
 **Status:** Foundation Ready - Dalam Progress Implementasi
 
@@ -188,7 +188,7 @@ Copy paste & modify untuk modul lainnya
 ## 📦 File Structure Status
 
 ```
-sriwijaya_kidss/
+educlass/
 ├── app/
 │   ├── Helpers/
 │   │   └── helpers.php ✅

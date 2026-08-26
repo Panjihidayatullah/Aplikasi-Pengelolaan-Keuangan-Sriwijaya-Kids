@@ -106,7 +106,7 @@
 </head>
 <body>
     <div class="header">
-        <h1>{{ config('finance.school.name', 'Sriwijaya Kids') }}</h1>
+        <h1>{{ config('finance.school.name', 'Educlass') }}</h1>
         <h2>Detail Transaksi Gaji Guru</h2>
         <p>Kode: {{ $gajiGuru->pengeluaran->kode_transaksi ?? '-' }}</p>
     </div>

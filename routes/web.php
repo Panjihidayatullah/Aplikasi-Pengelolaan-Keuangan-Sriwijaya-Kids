@@ -14,6 +14,7 @@ use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SiswaController;
 use App\Http\Controllers\GuruController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\Admin\UserApprovalController;
 use App\Http\Controllers\KurikulumController;
 use App\Http\Controllers\SemesterController;
 use App\Http\Controllers\TahunAjaranController;
@@ -113,6 +114,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     
     // Pengaturan - Manajemen User
     Route::resource('users', UserController::class)->middleware('role:Admin');
+    
+    // Pengaturan - Persetujuan Akun
+    Route::prefix('admin/approvals')->name('admin.approvals.')->middleware('role:Admin')->group(function () {
+        Route::get('/', [UserApprovalController::class, 'index'])->name('index');
+        Route::patch('/{user}/approve', [UserApprovalController::class, 'approve'])->name('approve');
+        Route::delete('/{user}/reject', [UserApprovalController::class, 'reject'])->name('reject');
+    });
     
     // Pengaturan - Role & Permission
     Route::resource('roles', RoleController::class)->middleware('role:Admin');

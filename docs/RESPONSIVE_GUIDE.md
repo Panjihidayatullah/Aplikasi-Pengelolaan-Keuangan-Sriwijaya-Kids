@@ -1,4 +1,4 @@
-# 📱 Responsive Design Guide - Sriwijaya Kids
+# 📱 Responsive Design Guide - Educlass
 
 ## ✅ Responsive Features Implemented
 

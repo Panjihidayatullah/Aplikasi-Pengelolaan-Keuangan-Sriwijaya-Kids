@@ -170,7 +170,13 @@ class AbsensiController extends Controller
                 ->get();
 
             if ($monthStart && $monthEnd) {
-                $tanggalKolom = $this->buildTanggalKolom($monthStart, $monthEnd, $selectedJadwal->hari);
+                $tanggalKolom = $this->buildTanggalKolom(
+                    $monthStart, 
+                    $monthEnd, 
+                    $selectedJadwal->hari, 
+                    $selectedJadwal->kelas_id, 
+                    $selectedSemester->id
+                );
 
                 $tanggalKeys = $tanggalKolom
                     ->map(fn (Carbon $date) => $date->toDateString())
@@ -576,7 +582,13 @@ class AbsensiController extends Controller
             ]);
         }
 
-        $tanggalKolom = $this->buildTanggalKolom($monthStart, $monthEnd, (string) $jadwal->hari);
+        $tanggalKolom = $this->buildTanggalKolom(
+            $monthStart, 
+            $monthEnd, 
+            (string) $jadwal->hari, 
+            $jadwal->kelas_id, 
+            $semester->id
+        );
         $tanggalKeys = $tanggalKolom->map(fn (Carbon $date) => $date->toDateString())->all();
 
         if (empty($tanggalKeys)) {
@@ -623,18 +635,23 @@ class AbsensiController extends Controller
         $guruId = $jadwal->guru_id ?: $this->resolveGuruId();
 
         foreach ($tanggalKeys as $dateKey) {
-            $absensi = Absensi::query()->updateOrCreate(
-                [
-                    'kelas_id'           => $jadwal->kelas_id,
-                    'mata_pelajaran_id'  => $jadwal->mata_pelajaran_id,
-                    'tanggal_absensi'    => $dateKey,
-                    'guru_id'            => $guruId,
-                ],
-                [
-                    'keterangan'  => null,
-                    'created_by'  => auth()->id(),
-                ]
-            );
+            $absensi = Absensi::withTrashed()->firstOrNew([
+                'kelas_id'           => $jadwal->kelas_id,
+                'mata_pelajaran_id'  => $jadwal->mata_pelajaran_id,
+                'tanggal_absensi'    => $dateKey,
+                'guru_id'            => $guruId,
+            ]);
+
+            $absensi->keterangan = null;
+            if (!$absensi->exists) {
+                $absensi->created_by = auth()->id();
+            }
+
+            if ($absensi->trashed()) {
+                $absensi->restore();
+            } else {
+                $absensi->save();
+            }
 
             foreach ($siswaIdsKelas as $siswaId) {
                 $status  = $submittedStatus[$siswaId][$dateKey] ?? 'hadir';
@@ -958,8 +975,22 @@ class AbsensiController extends Controller
         return [$monthStart, $monthEnd];
     }
 
-    private function buildTanggalKolom(Carbon $monthStart, Carbon $monthEnd, string $hariJadwal)
+    private function buildTanggalKolom(Carbon $monthStart, Carbon $monthEnd, string $hariJadwal, ?int $kelasId = null, ?int $semesterId = null)
     {
+        if ($kelasId && $semesterId) {
+            $pertemuanDates = \App\Models\LmsPertemuan::query()
+                ->where('kelas_id', $kelasId)
+                ->where('semester_id', $semesterId)
+                ->whereDate('tanggal', '>=', $monthStart->toDateString())
+                ->whereDate('tanggal', '<=', $monthEnd->toDateString())
+                ->orderBy('tanggal')
+                ->pluck('tanggal');
+
+            if ($pertemuanDates->isNotEmpty()) {
+                return $pertemuanDates->map(fn($d) => Carbon::parse((string) $d)->startOfDay());
+            }
+        }
+
         $result = collect();
 
         foreach (CarbonPeriod::create($monthStart, $monthEnd) as $date) {

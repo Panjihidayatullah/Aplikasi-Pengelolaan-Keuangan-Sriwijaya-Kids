@@ -7,6 +7,9 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
 
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
+    <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.svg') }}">
+
     <title>@yield('title', config('app.name', 'Laravel'))</title>
 
     <!-- Scripts -->
@@ -20,8 +23,8 @@
         $isForgotPasswordPage = request()->routeIs('password.request') || request()->routeIs('password.reset');
         $useResponsiveImagePanel = $isLoginPage || $isRegisterPage || $isForgotPasswordPage;
         $leftBackgroundImage = $isLoginPage
-            ? asset('images/Background_HSK_Login.png')
-            : asset('images/Background_HSK.png');
+            ? asset('images/educlass-auth-login.svg')
+            : asset('images/educlass-auth.svg');
         $leftBackgroundStyle = $isRegisterPage
             ? 'background-size: 100% auto; background-position: center top;'
             : 'background-size: cover; background-position: center;';
@@ -53,7 +56,7 @@
                     <!-- Logo/Brand -->
                     <div class="relative z-10">
                         <div class="mb-8">
-                            <img src="{{ asset(config('finance.school.logo', 'images/Logo_SriwijayaKids.png')) }}"
+                               <img src="{{ asset(config('finance.school.logo', 'images/educlass-logo.svg')) }}"
                                  alt="{{ config('finance.school.name', config('app.name')) }}"
                                  class="h-14 w-auto object-contain">
                         </div>

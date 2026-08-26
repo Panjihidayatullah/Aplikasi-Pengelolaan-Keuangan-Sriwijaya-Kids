@@ -1,6 +1,6 @@
 # 🚀 Panduan Implementasi Sistem Keuangan Sekolah
 
-Project ini adalah implementasi lengkap Sistem Keuangan Sekolah Kids Sriwijaya berdasarkan README.md. Karena ini adalah project yang sangat besar, implementasi dilakukan secara bertahap.
+Project ini adalah implementasi lengkap Sistem Keuangan Sekolah Educlass berdasarkan README.md. Karena ini adalah project yang sangat besar, implementasi dilakukan secara bertahap.
 
 ---
 
@@ -282,21 +282,21 @@ class RolePermissionSeeder extends Seeder
         // Create default users
         $admin = User::create([
             'name' => 'Admin',
-            'email' => 'admin@sriwijayakidss.com',
+            'email' => 'admin@educlass.com',
             'password' => bcrypt('password'),
         ]);
         $admin->assignRole('Admin');
 
         $bendahara = User::create([
             'name' => 'Bendahara',
-            'email' => 'bendahara@sriwijayakidss.com',
+            'email' => 'bendahara@educlass.com',
             'password' => bcrypt('password'),
         ]);
         $bendahara->assignRole('Bendahara');
 
         $kepsek = User::create([
             'name' => 'Kepala Sekolah',
-            'email' => 'kepsek@sriwijayakidss.com',
+            'email' => 'kepsek@educlass.com',
             'password' => bcrypt('password'),
         ]);
         $kepsek->assignRole('Kepala Sekolah');
@@ -330,10 +330,10 @@ php artisan db:seed --class=RolePermissionSeeder
 
 return [
     'school' => [
-        'name' => 'Sekolah Kids Sriwijaya',
+        'name' => 'Educlass',
         'address' => 'Jl. Contoh No. 123, Palembang',
         'phone' => '(0711) 1234567',
-        'email' => 'info@sriwijayakids.com',
+        'email' => 'info@educlass.com',
         'logo' => 'images/logo.png',
     ],
 

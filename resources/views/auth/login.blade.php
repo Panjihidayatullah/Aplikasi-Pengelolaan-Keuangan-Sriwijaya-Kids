@@ -22,8 +22,23 @@
         </div>
     @endif
 
-    <form method="POST" action="{{ route('login') }}" class="space-y-5">
+    @if (session('error'))
+        <div class="mb-6 bg-red-50 border-l-4 border-red-500 text-red-800 px-4 py-3 rounded-lg">
+            <div class="flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v4a1 1 0 102 0V7zm-1 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/>
+                </svg>
+                <span class="text-sm font-medium">{{ session('error') }}</span>
+            </div>
+        </div>
+    @endif
+
+    <form method="POST" action="{{ route('login') }}" class="space-y-5" autocomplete="off">
         @csrf
+
+        <!-- Fake inputs to disable autofill -->
+        <input type="email" style="display:none" name="fakeusernameremembered" aria-hidden="true">
+        <input type="password" style="display:none" name="fakepasswordremembered" aria-hidden="true">
 
         <!-- Email Address -->
         <div>
@@ -34,7 +49,7 @@
                    value="{{ old('email') }}" 
                    required 
                    autofocus 
-                   autocomplete="off"
+                   autocomplete="nope"
                    class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all duration-200 @error('email') border-red-500 @enderror"
                    placeholder="nama@email.com">
             @error('email')
@@ -55,7 +70,7 @@
                        type="password" 
                        name="password" 
                        required 
-                       autocomplete="off"
+                       autocomplete="new-password"
                        class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all duration-200 @error('password') border-red-500 @enderror"
                        placeholder="••••••••">
                 <button type="button" 
@@ -114,7 +129,7 @@
                     <a href="{{ route('register') }}" class="font-semibold text-blue-600 hover:text-blue-700 transition-colors">Daftar Akun</a>
                 </p>
             @endif
-            <p class="text-sm text-slate-600">Khusus akun siswa dibuat oleh admin sekolah.</p>
+            <p class="text-sm text-slate-600">Khusus akun siswa dan guru dibuat oleh admin sekolah.</p>
         </div>
     </form>
 </div>

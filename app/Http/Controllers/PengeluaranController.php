@@ -143,6 +143,14 @@ class PengeluaranController extends Controller
             ]);
         }
 
+        $totalPemasukan = \App\Models\Pembayaran::where('status', 'Lunas')->sum('jumlah');
+        $totalPengeluaran = \App\Models\Pengeluaran::whereIn('status', ['Disetujui', 'Pending'])->sum('jumlah');
+        $saldoTersedia = $totalPemasukan - $totalPengeluaran;
+
+        if (in_array($validated['status'], ['Disetujui', 'Pending']) && $validated['jumlah'] > $saldoTersedia) {
+            return back()->withInput()->with('error', 'Saldo tidak cukup untuk melakukan pengeluaran ini. (Saldo tersedia: Rp ' . number_format($saldoTersedia, 0, ',', '.') . ')');
+        }
+
         // Generate kode transaksi unik
         $validated['kode_transaksi'] = 'OUT-' . date('YmdHis') . '-' . strtoupper(substr(uniqid(), -4));
         
@@ -234,6 +242,16 @@ class PengeluaranController extends Controller
                 'periode_bulan' => 'required|integer|between:1,12',
                 'periode_tahun' => 'required|integer|between:2000,2100',
             ]);
+        }
+
+        $totalPemasukan = \App\Models\Pembayaran::where('status', 'Lunas')->sum('jumlah');
+        $totalPengeluaranLain = \App\Models\Pengeluaran::whereIn('status', ['Disetujui', 'Pending'])
+                                    ->where('id', '!=', $pengeluaran->id)
+                                    ->sum('jumlah');
+        $saldoTersedia = $totalPemasukan - $totalPengeluaranLain;
+
+        if (in_array($validated['status'], ['Disetujui', 'Pending']) && $validated['jumlah'] > $saldoTersedia) {
+            return back()->withInput()->with('error', 'Saldo tidak cukup untuk memperbarui pengeluaran ini. (Saldo tersedia: Rp ' . number_format($saldoTersedia, 0, ',', '.') . ')');
         }
 
         // Map deskripsi ke keterangan sesuai nama kolom di database

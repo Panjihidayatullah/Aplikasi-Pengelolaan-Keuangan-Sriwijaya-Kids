@@ -14,7 +14,6 @@ class CreateNewUser implements CreatesNewUsers
     use PasswordValidationRules, ProfileValidationRules;
 
     private const REGISTRATION_ROLES = [
-        'Admin',
         'Bendahara',
         'Kepala Sekolah',
     ];
@@ -30,6 +29,7 @@ class CreateNewUser implements CreatesNewUsers
             ...$this->profileRules(),
             'password' => $this->passwordRules(),
             'role' => ['required', 'string', 'in:' . implode(',', self::REGISTRATION_ROLES)],
+            'keterangan_registrasi' => ['required', 'string', 'max:255'],
         ])->validate();
 
         $user = User::create([
@@ -37,6 +37,8 @@ class CreateNewUser implements CreatesNewUsers
             'email' => $input['email'],
             'password' => $input['password'],
             'role' => $input['role'],
+            'is_approved' => false,
+            'keterangan_registrasi' => $input['keterangan_registrasi'],
         ]);
 
         // Assign role using Spatie

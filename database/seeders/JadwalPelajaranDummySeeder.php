@@ -24,12 +24,12 @@ class JadwalPelajaranDummySeeder extends Seeder
         $now = Carbon::now();
 
         $guruSeed = [
-            ['nip' => 'G-1001', 'nama' => 'Bayu Wijaya', 'jenis_kelamin' => 'L', 'email' => 'guru.bayu@sriwijayakidss.com'],
-            ['nip' => 'G-1002', 'nama' => 'Dewi Anggraini', 'jenis_kelamin' => 'P', 'email' => 'guru.dewi@sriwijayakidss.com'],
-            ['nip' => 'G-1003', 'nama' => 'Rudi Hartono', 'jenis_kelamin' => 'L', 'email' => 'guru.rudi@sriwijayakidss.com'],
-            ['nip' => 'G-1004', 'nama' => 'Sinta Maharani', 'jenis_kelamin' => 'P', 'email' => 'guru.sinta@sriwijayakidss.com'],
-            ['nip' => 'G-1005', 'nama' => 'Andi Pratama', 'jenis_kelamin' => 'L', 'email' => 'guru.andi@sriwijayakidss.com'],
-            ['nip' => 'G-1006', 'nama' => 'Lina Marlina', 'jenis_kelamin' => 'P', 'email' => 'guru.lina@sriwijayakidss.com'],
+            ['nip' => 'G-1001', 'nama' => 'Bayu Wijaya', 'jenis_kelamin' => 'L', 'email' => 'guru.bayu@educlass.com'],
+            ['nip' => 'G-1002', 'nama' => 'Dewi Anggraini', 'jenis_kelamin' => 'P', 'email' => 'guru.dewi@educlass.com'],
+            ['nip' => 'G-1003', 'nama' => 'Rudi Hartono', 'jenis_kelamin' => 'L', 'email' => 'guru.rudi@educlass.com'],
+            ['nip' => 'G-1004', 'nama' => 'Sinta Maharani', 'jenis_kelamin' => 'P', 'email' => 'guru.sinta@educlass.com'],
+            ['nip' => 'G-1005', 'nama' => 'Andi Pratama', 'jenis_kelamin' => 'L', 'email' => 'guru.andi@educlass.com'],
+            ['nip' => 'G-1006', 'nama' => 'Lina Marlina', 'jenis_kelamin' => 'P', 'email' => 'guru.lina@educlass.com'],
         ];
 
         foreach ($guruSeed as $index => $guru) {

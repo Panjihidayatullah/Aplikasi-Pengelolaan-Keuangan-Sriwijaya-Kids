@@ -98,7 +98,11 @@ return [
             'search_path' => 'public',
             'sslmode' => env('DB_SSLMODE', 'prefer'),
             'endpoint' => env('DB_ENDPOINT'),
-            'options' => [],
+            // Persistent connection: kurangi overhead handshake ke Neon.tech cloud
+            'persistent' => env('DB_PERSISTENT', false),
+            'options' => [
+                PDO::ATTR_TIMEOUT => 10, // connect timeout 10 detik
+            ],
         ],
 
         'sqlsrv' => [

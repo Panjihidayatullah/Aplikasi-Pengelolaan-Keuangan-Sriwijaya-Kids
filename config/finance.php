@@ -10,12 +10,12 @@ return [
     |
     */
     'school' => [
-        'name' => env('SCHOOL_NAME', 'Sriwijaya Kids'),
+        'name' => env('SCHOOL_NAME', 'Educlass'),
         'address' => env('SCHOOL_ADDRESS', 'Jl. Contoh No. 123, Palembang'),
         'phone' => env('SCHOOL_PHONE', '(0711) 1234567'),
-        'email' => env('SCHOOL_EMAIL', 'info@sriwijayakids.com'),
-        'logo' => env('SCHOOL_LOGO', 'images/Logo_SriwijayaKids.png'),
-        'website' => env('SCHOOL_WEBSITE', 'https://sriwijayakids.com'),
+        'email' => env('SCHOOL_EMAIL', 'info@educlass.com'),
+        'logo' => env('SCHOOL_LOGO', 'images/educlass-logo.svg'),
+        'website' => env('SCHOOL_WEBSITE', 'https://educlass.com'),
     ],
 
     /*
@@ -97,6 +97,6 @@ return [
     */
     'report' => [
         'header_height' => 80, // pixels
-        'footer_text' => 'Dicetak oleh Sistem Keuangan Sriwijaya Kids',
+        'footer_text' => 'Dicetak oleh Sistem Keuangan Educlass',
     ],
 ];

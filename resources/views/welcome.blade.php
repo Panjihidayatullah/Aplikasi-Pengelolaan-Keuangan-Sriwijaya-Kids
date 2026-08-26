@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('finance.school.name', 'Sriwijaya Kids') }}</title>
+    <title>{{ config('finance.school.name', 'Educlass') }}</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
@@ -15,7 +15,7 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-12 text-center">
                     <h1 class="text-4xl font-bold text-gray-900 mb-4">
-                        {{ config('finance.school.name', 'Sistem Keuangan Sekolah') }}
+                        {{ config('finance.school.name', 'Educlass') }}
                     </h1>
                     <p class="text-lg text-gray-600 mb-8">
                         Sistem Manajemen Keuangan dan Administrasi Sekolah

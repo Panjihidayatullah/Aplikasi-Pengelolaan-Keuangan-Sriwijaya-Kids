@@ -306,6 +306,15 @@
                     <input type="hidden" name="semester_id" value="{{ $selectedSemesterId }}">
                     <input type="hidden" name="bulan" value="{{ $selectedBulan }}">
                     <input type="hidden" name="kelas_id" value="{{ $selectedKelasId }}">
+                    @if(!empty($pertemuanTanggalFocus))
+                    <input type="hidden" name="pertemuan_tanggal" value="{{ $activeDateKey }}">
+                    <select disabled
+                        class="px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 bg-gray-100 cursor-not-allowed">
+                        <option value="{{ $activeDateKey }}" selected>
+                            {{ $activeTanggal?->translatedFormat('d M Y') }} ({{ $hariNama[$activeTanggal?->dayOfWeekIso] ?? '-' }})
+                        </option>
+                    </select>
+                    @else
                     <select name="pertemuan_tanggal" onchange="this.form.submit()"
                         class="px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 focus:ring-2 focus:ring-indigo-400">
                         @foreach($tanggalKolom as $tgl)
@@ -315,6 +324,7 @@
                         @endforeach
                     </select>
                     <noscript><button type="submit" class="px-3 py-2 bg-indigo-600 text-white rounded-lg text-sm">Pilih</button></noscript>
+                    @endif
                 </form>
             </div>
         </div>

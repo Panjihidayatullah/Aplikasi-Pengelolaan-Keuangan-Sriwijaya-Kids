@@ -8,6 +8,9 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
+    <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.svg') }}">
+
     <title>@yield('title', config('app.name', 'Laravel'))</title>
 
     <script>
@@ -113,7 +116,7 @@
     </div>
 
     <!-- Loading Overlay -->
-    <div id="loading-overlay" class="fixed inset-0 bg-gray-900/30 backdrop-blur-md z-[9999] flex items-center justify-center" style="display: none;">
+    <div id="loading-overlay" class="fixed inset-0 bg-gray-900/40 z-[9999] flex items-center justify-center" style="display: none;">
         <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-8 flex flex-col items-center space-y-4 max-w-sm mx-4">
             <!-- Spinner -->
             <div class="w-16 h-16 border-4 border-gray-200 border-t-blue-600 rounded-full animate-spin"></div>
@@ -125,6 +128,183 @@
             </div>
         </div>
     </div>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- Custom Confirm Modal (Global)                  -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <div id="custom-confirm-overlay"
+         style="display:none; position:fixed; inset:0; z-index:10000;
+                align-items:center; justify-content:center; padding:1rem;"
+         aria-modal="true" role="dialog" aria-labelledby="confirm-title">
+
+        <!-- Backdrop -->
+        <div id="custom-confirm-backdrop"
+             style="position:absolute; inset:0;
+                    background:rgba(15,23,42,0.45);
+                    backdrop-filter:blur(4px);
+                    -webkit-backdrop-filter:blur(4px);"></div>
+
+        <!-- Card -->
+        <div id="custom-confirm-card"
+             style="position:relative; z-index:1; width:100%; max-width:400px;
+                    background:#ffffff;
+                    border:1px solid #e2e8f0;
+                    border-radius:1.25rem;
+                    box-shadow:0 20px 60px rgba(0,0,0,0.18), 0 4px 16px rgba(0,0,0,0.08);
+                    padding:2rem 2rem 1.75rem;
+                    transform:scale(0.88); opacity:0;
+                    transition: transform .25s cubic-bezier(.34,1.56,.64,1), opacity .2s ease;">
+
+            <!-- Icon ring -->
+            <div style="display:flex; justify-content:center; margin-bottom:1.25rem;">
+                <div id="confirm-icon-wrap"
+                     style="width:60px; height:60px; border-radius:50%;
+                            background:#fef2f2;
+                            border:1.5px solid #fca5a5;
+                            display:flex; align-items:center; justify-content:center;
+                            box-shadow:0 0 0 6px #fff5f5;">
+                    <svg width="26" height="26" fill="none" stroke="#ef4444"
+                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                         viewBox="0 0 24 24">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+                        <line x1="12" y1="9" x2="12" y2="13"/>
+                        <line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Title -->
+            <h3 id="confirm-title"
+                style="text-align:center; font-size:1.125rem; font-weight:700;
+                       color:#0f172a; margin:0 0 .5rem; letter-spacing:-.015em;">
+                Konfirmasi Tindakan
+            </h3>
+
+            <!-- Message -->
+            <p id="confirm-message"
+               style="text-align:center; font-size:.9rem; color:#64748b;
+                      line-height:1.65; margin:0 0 1.75rem;"></p>
+
+            <!-- Divider -->
+            <div style="height:1px; background:#f1f5f9; margin-bottom:1.5rem;"></div>
+
+            <!-- Buttons -->
+            <div style="display:flex; gap:.75rem;">
+                <button id="confirm-cancel-btn"
+                        style="flex:1; padding:.7rem 1rem; border-radius:.75rem;
+                               background:#f8fafc;
+                               border:1px solid #e2e8f0;
+                               color:#475569; font-size:.875rem; font-weight:600;
+                               cursor:pointer; transition:all .18s ease;
+                               font-family:inherit;">
+                    Batal
+                </button>
+                <button id="confirm-ok-btn"
+                        style="flex:1; padding:.7rem 1rem; border-radius:.75rem;
+                               background:linear-gradient(135deg,#ef4444 0%,#dc2626 100%);
+                               border:1px solid rgba(239,68,68,.2);
+                               color:#fff; font-size:.875rem; font-weight:700;
+                               cursor:pointer;
+                               box-shadow:0 4px 14px rgba(239,68,68,.35);
+                               transition:all .18s ease;
+                               font-family:inherit;">
+                    Ya, Lanjutkan
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- Responsive JS Initializer (Global)            -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <script>
+    (function () {
+        'use strict';
+
+        /* ── Ensure every table inside main has an overflow-x-auto wrapper ── */
+        function wrapTables() {
+            var tables = document.querySelectorAll('main table');
+            tables.forEach(function (table) {
+                // Skip if already wrapped
+                if (table.parentElement && table.parentElement.classList.contains('overflow-x-auto')) return;
+                if (table.dataset.wrapDone) return;
+
+                // Skip tables that are already inside an overflow container
+                var ancestor = table.parentElement;
+                while (ancestor && ancestor !== document.body) {
+                    if (
+                        ancestor.classList.contains('overflow-x-auto') ||
+                        ancestor.classList.contains('overflow-x-scroll') ||
+                        ancestor.classList.contains('table-responsive')
+                    ) {
+                        table.dataset.wrapDone = '1';
+                        return;
+                    }
+                    ancestor = ancestor.parentElement;
+                }
+
+                // Wrap it
+                var wrapper = document.createElement('div');
+                wrapper.className = 'overflow-x-auto w-full';
+                wrapper.style.webkitOverflowScrolling = 'touch';
+                table.parentNode.insertBefore(wrapper, table);
+                wrapper.appendChild(table);
+                table.dataset.wrapDone = '1';
+            });
+        }
+
+        /* ── Mobile page-title: ensure flex containers wrap nicely ── */
+        function fixPageHeaders() {
+            if (window.innerWidth > 640) return;
+
+            // Find the common pattern: flex justify-between at page top
+            var mains = document.querySelectorAll('main > div > div');
+            mains.forEach(function (el) {
+                if (
+                    el.children.length === 2 &&
+                    (el.classList.contains('flex') || window.getComputedStyle(el).display === 'flex') &&
+                    (el.classList.contains('justify-between') || el.style.justifyContent === 'space-between')
+                ) {
+                    el.style.flexDirection = 'column';
+                    el.style.alignItems    = 'flex-start';
+                    el.style.gap           = '0.75rem';
+
+                    // Make any link/button inside span full width
+                    var btns = el.querySelectorAll(':scope > a, :scope > button');
+                    btns.forEach(function (btn) {
+                        btn.style.width = '100%';
+                        btn.style.justifyContent = 'center';
+                    });
+                }
+            });
+        }
+
+        /* ── Run all fixes ── */
+        function initResponsive() {
+            wrapTables();
+            fixPageHeaders();
+        }
+
+        /* ── On DOM ready ── */
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initResponsive);
+        } else {
+            initResponsive();
+        }
+
+        /* ── Re-run on Livewire/Alpine navigation if applicable ── */
+        document.addEventListener('livewire:navigated', initResponsive);
+
+        /* ── Debounced resize handler ── */
+        var resizeTimeout;
+        window.addEventListener('resize', function () {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(initResponsive, 150);
+        });
+
+    })();
+    </script>
 
     <!-- Loading Script -->
     <script>
@@ -145,10 +325,10 @@
                 return;
             }
 
-            // Delay a bit to avoid flicker for very fast navigation.
+            // Hanya tampilkan loader jika navigasi memakan >400ms (cegah flicker).
             loadingTimer = setTimeout(function () {
                 loadingOverlay.style.display = 'flex';
-            }, 120);
+            }, 400);
         }
 
         function hideLoading() {
@@ -209,14 +389,16 @@
         // Show loading when clicking links
         document.addEventListener('click', function(e) {
             const link = e.target.closest('a');
-            if (!link || shouldSkipLoaderForLink(link)) {
-                // Set flag agar beforeunload tidak trigger loader
+            
+            if (link && shouldSkipLoaderForLink(link)) {
                 _skipNextBeforeUnload = true;
-                // Reset flag setelah 3 detik jika beforeunload tidak terpanggil
-                setTimeout(function() { _skipNextBeforeUnload = false; }, 3000);
                 return;
             }
 
+            // Only act on real navigation links
+            if (!link) {
+                return;
+            }
             showLoading(false);
         });
 
@@ -244,10 +426,10 @@
             hideLoading();
         });
         
-        // Hide loading if it's still showing after 4 seconds (safety timeout)
+        // Hide loading if it's still showing after 8 seconds (safety timeout)
         setTimeout(function() {
             hideLoading();
-        }, 4000);
+        }, 8000);
 
         // Keep table height within viewport and navigate rows by slide-style paging.
         (function () {
@@ -710,6 +892,164 @@
         }
     </style>
 
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- Custom Confirm Modal — Global JS               -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <script>
+    (function () {
+        'use strict';
+
+        var overlay  = document.getElementById('custom-confirm-overlay');
+        var card     = document.getElementById('custom-confirm-card');
+        var msgEl    = document.getElementById('confirm-message');
+        var titleEl  = document.getElementById('confirm-title');
+        var okBtn    = document.getElementById('confirm-ok-btn');
+        var cancelBtn= document.getElementById('confirm-cancel-btn');
+        var backdrop = document.getElementById('custom-confirm-backdrop');
+
+        if (!overlay) return;
+
+        var _pendingResolve = null;
+
+        /* ── Open ── */
+        function openConfirm(message, title) {
+            msgEl.textContent   = message || 'Apakah Anda yakin?';
+            titleEl.textContent = title   || 'Konfirmasi Tindakan';
+
+            overlay.style.display = 'flex';
+            // Animate in
+            requestAnimationFrame(function () {
+                requestAnimationFrame(function () {
+                    card.style.transform = 'scale(1)';
+                    card.style.opacity   = '1';
+                });
+            });
+
+            return new Promise(function (resolve) {
+                _pendingResolve = resolve;
+            });
+        }
+
+        /* ── Close ── */
+        function closeConfirm(result) {
+            card.style.transform = 'scale(0.88)';
+            card.style.opacity   = '0';
+            setTimeout(function () {
+                overlay.style.display = 'none';
+            }, 220);
+            if (typeof _pendingResolve === 'function') {
+                _pendingResolve(result);
+                _pendingResolve = null;
+            }
+        }
+
+        /* ── Button handlers ── */
+        okBtn.addEventListener('click',     function () { closeConfirm(true);  });
+        cancelBtn.addEventListener('click', function () { closeConfirm(false); });
+        backdrop.addEventListener('click',  function () { closeConfirm(false); });
+        document.addEventListener('keydown', function (e) {
+            if (overlay.style.display !== 'none') {
+                if (e.key === 'Enter')  { e.preventDefault(); closeConfirm(true);  }
+                if (e.key === 'Escape') { e.preventDefault(); closeConfirm(false); }
+            }
+        });
+
+        /* ── Button hover effects ── */
+        okBtn.addEventListener('mouseenter', function () {
+            this.style.transform   = 'translateY(-1px)';
+            this.style.boxShadow   = '0 6px 22px rgba(239,68,68,.5)';
+        });
+        okBtn.addEventListener('mouseleave', function () {
+            this.style.transform   = '';
+            this.style.boxShadow   = '0 4px 14px rgba(239,68,68,.35)';
+        });
+        cancelBtn.addEventListener('mouseenter', function () {
+            this.style.color       = '#1e293b';
+            this.style.background  = '#f1f5f9';
+            this.style.borderColor = '#cbd5e1';
+        });
+        cancelBtn.addEventListener('mouseleave', function () {
+            this.style.color       = '#475569';
+            this.style.background  = '#f8fafc';
+            this.style.borderColor = '#e2e8f0';
+        });
+
+        /* ══════════════════════════════════════════════════
+           INTERCEPTOR 1 — forms with inline onsubmit confirm
+           ══════════════════════════════════════════════════ */
+        document.addEventListener('DOMContentLoaded', function () {
+            var forms = document.querySelectorAll('form');
+            forms.forEach(function (form) {
+                var onsubmitAttr = form.getAttribute('onsubmit') || '';
+                var match = onsubmitAttr.match(/confirm\s*\(\s*['"`]([\s\S]*?)['"`]\s*\)/);
+                if (!match) return;
+
+                var message = match[1];
+                // Remove the original onsubmit so it doesn't fire
+                form.removeAttribute('onsubmit');
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                    openConfirm(message).then(function (ok) {
+                        if (ok) {
+                            // Temporarily disable our listener and submit
+                            form.__confirming = true;
+                            form.submit();
+                        }
+                    });
+                });
+            });
+        });
+
+        /* ══════════════════════════════════════════════════
+           INTERCEPTOR 2 — [data-confirm] on any element
+           ══════════════════════════════════════════════════ */
+        document.addEventListener('click', function (e) {
+            var el = e.target.closest('[data-confirm]');
+            if (!el) return;
+
+            // Already confirming? Let it through.
+            if (el.__confirming) { el.__confirming = false; return; }
+
+            // Only prevent default — do NOT stopPropagation so other
+            // listeners (e.g. loading overlay) still work normally.
+            e.preventDefault();
+
+            var message = el.getAttribute('data-confirm');
+            openConfirm(message).then(function (ok) {
+                if (!ok) return;
+                el.__confirming = true;
+                // If it's a submit button inside a form, submit the form
+                if (el.type === 'submit' && el.form) {
+                    el.form.submit();
+                } else if (el.tagName === 'A') {
+                    window.location.href = el.href;
+                } else {
+                    el.click();
+                }
+            });
+        }); // ← no capture (removed the 'true' argument)
+
+        /* ══════════════════════════════════════════════════
+           INTERCEPTOR 3 — replace window.confirm globally
+           ══════════════════════════════════════════════════ */
+        window.__nativeConfirm = window.confirm.bind(window);
+        window.confirm = function (message) {
+            // NOTE: window.confirm must be synchronous. Since our modal is
+            // async, we show it visually but return true so synchronous
+            // callers (e.g. form onsubmit) are not blocked.
+            // The modal's Cancel button will not stop synchronous actions —
+            // use data-confirm attribute for full async cancel support.
+            openConfirm(message || 'Apakah Anda yakin?');
+            return true;
+        };
+
+        /* Expose openConfirm globally for custom use */
+        window.showConfirm = openConfirm;
+    })();
+    </script>
+
     @stack('scripts')
+
 </body>
 </html>

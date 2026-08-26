@@ -50,7 +50,7 @@ class LmsMateriController extends Controller
 
                 $q->whereIn('kelas_id', $allowedKelasIds);
             })
-            ->when(!$selectedKelasId, fn ($q) => $q->whereRaw('1 = 0'))
+            ->when($isSiswaScope && !$selectedKelasId, fn ($q) => $q->whereRaw('1 = 0'))
             ->when($selectedKelasId, fn ($q) => $q->where('kelas_id', $selectedKelasId))
             ->when($request->filled('semester_id'), fn ($q) => $q->where('semester_id', $request->integer('semester_id')))
             ->when($request->filled('tahun_ajaran_id'), fn ($q) => $q->where('tahun_ajaran_id', $request->integer('tahun_ajaran_id')))
@@ -70,20 +70,24 @@ class LmsMateriController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        $mataPelajarans = collect();
-        if ($selectedKelasId) {
-            $mapelIds = Materi::query()
-                ->where('kelas_id', $selectedKelasId)
-                ->whereNotNull('mata_pelajaran_id')
-                ->pluck('mata_pelajaran_id')
-                ->map(fn ($id) => (int) $id)
-                ->unique()
-                ->values();
+        $mapelQuery = Materi::query()
+            ->when($this->isGuruScope(), function ($q) use ($allowedKelasIds) {
+                if (!empty($allowedKelasIds)) {
+                    $q->whereIn('kelas_id', $allowedKelasIds);
+                } else {
+                    $q->whereRaw('1 = 0');
+                }
+            })
+            ->when($selectedKelasId, fn ($q) => $q->where('kelas_id', $selectedKelasId))
+            ->whereNotNull('mata_pelajaran_id')
+            ->select('mata_pelajaran_id')
+            ->distinct();
 
-            $mataPelajarans = MataPelajaran::dropdownOptions(MataPelajaran::query()
-                ->when($mapelIds->isNotEmpty(), fn ($q) => $q->whereIn('id', $mapelIds->all()), fn ($q) => $q->whereRaw('1 = 0'))
-            );
-        }
+        $mapelIds = $mapelQuery->pluck('mata_pelajaran_id')->map(fn ($id) => (int) $id)->values();
+
+        $mataPelajarans = MataPelajaran::dropdownOptions(MataPelajaran::query()
+            ->when($mapelIds->isNotEmpty(), fn ($q) => $q->whereIn('id', $mapelIds->all()), fn ($q) => $q->whereRaw('1 = 0'))
+        );
 
         return view('akademik.lms.materi.index', compact('materi', 'kelases', 'mataPelajarans', 'selectedKelasId', 'isSiswaScope'));
     }

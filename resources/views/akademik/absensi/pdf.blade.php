@@ -121,7 +121,7 @@
 </head>
 <body>
     <div class="header">
-        <h1>{{ config('finance.school.name', 'Sriwijaya Kids') }}</h1>
+        <h1>{{ config('finance.school.name', 'Educlass') }}</h1>
         <h2>Rekap Absensi Semester</h2>
         <p>Kelas {{ $kelas->nama ?? '-' }} | Semester {{ $semester->nomor_semester ?? '-' }}</p>
         <p>

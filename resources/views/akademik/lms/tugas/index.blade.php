@@ -90,7 +90,12 @@
             </div>
 
             <div class="flex-1 min-w-[220px]">
+                @if(request()->filled('pertemuan_tanggal') && request()->filled('back_url'))
+                <input type="hidden" name="pertemuan_tanggal" value="{{ request('pertemuan_tanggal') }}">
+                <input type="date" disabled value="{{ request('pertemuan_tanggal') }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed">
+                @else
                 <input type="date" name="pertemuan_tanggal" value="{{ request('pertemuan_tanggal') }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                @endif
             </div>
 
             <div class="min-w-[140px] w-full sm:w-auto">

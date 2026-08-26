@@ -73,20 +73,24 @@ class LmsTugasController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        $mataPelajarans = collect();
-        if ($selectedKelasId) {
-            $mapelIds = Tugas::query()
-                ->where('kelas_id', $selectedKelasId)
-                ->whereNotNull('mata_pelajaran_id')
-                ->pluck('mata_pelajaran_id')
-                ->map(fn ($id) => (int) $id)
-                ->unique()
-                ->values();
+        $mapelQuery = Tugas::query()
+            ->when($this->isGuruScope(), function ($q) use ($allowedKelasIds) {
+                if (!empty($allowedKelasIds)) {
+                    $q->whereIn('kelas_id', $allowedKelasIds);
+                } else {
+                    $q->whereRaw('1 = 0');
+                }
+            })
+            ->when($selectedKelasId, fn ($q) => $q->where('kelas_id', $selectedKelasId))
+            ->whereNotNull('mata_pelajaran_id')
+            ->select('mata_pelajaran_id')
+            ->distinct();
 
-            $mataPelajarans = MataPelajaran::dropdownOptions(MataPelajaran::query()
-                ->when($mapelIds->isNotEmpty(), fn ($q) => $q->whereIn('id', $mapelIds->all()), fn ($q) => $q->whereRaw('1 = 0'))
-            );
-        }
+        $mapelIds = $mapelQuery->pluck('mata_pelajaran_id')->map(fn ($id) => (int) $id)->values();
+
+        $mataPelajarans = MataPelajaran::dropdownOptions(MataPelajaran::query()
+            ->when($mapelIds->isNotEmpty(), fn ($q) => $q->whereIn('id', $mapelIds->all()), fn ($q) => $q->whereRaw('1 = 0'))
+        );
 
         return view('akademik.lms.tugas.index', compact('tugas', 'kelases', 'mataPelajarans', 'selectedKelasId', 'isSiswaScope'));
     }

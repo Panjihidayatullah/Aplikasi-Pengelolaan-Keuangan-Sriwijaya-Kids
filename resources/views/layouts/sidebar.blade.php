@@ -14,18 +14,26 @@
        :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'">
     
     <!-- Sidebar Header -->
-    <div class="flex items-center justify-between h-20 px-6 border-b border-slate-700/50 flex-shrink-0">
-        <div class="flex items-center gap-3 min-w-0">
-            <img src="{{ asset(config('finance.school.logo', 'images/Logo_SriwijayaKids.png')) }}"
-                 alt="{{ config('finance.school.name', config('app.name')) }}"
-                 class="h-12 w-auto object-contain shrink-0">
-            <span class="max-w-[140px] text-xs leading-tight text-white">
-                <span class="block">Homeschooling</span>
-                <span class="block">Sriwijaya <strong class="font-bold">Kids</strong></span>
-            </span>
+    <div class="flex items-center justify-between px-4 border-b border-slate-700/50 flex-shrink-0 overflow-hidden"
+         style="height: 5rem; min-height: 5rem; max-height: 5rem;">
+        <div class="flex items-center gap-2.5 min-w-0 flex-1 overflow-hidden">
+            <!-- Logo — constrained strictly within header height -->
+            <div class="flex-shrink-0 flex items-center justify-center"
+                 style="width: 2.75rem; height: 2.75rem; overflow: hidden;">
+                <img src="{{ asset(config('finance.school.logo', 'images/educlass-logo.svg')) }}"
+                     alt="{{ config('finance.school.name', config('app.name')) }}"
+                     style="width: 100%; height: 100%; object-fit: contain; display: block;">
+            </div>
+            <!-- School Name -->
+            <div class="min-w-0 overflow-hidden">
+                <p class="text-xs text-slate-400 leading-none mb-0.5 truncate">Welcome</p>
+                <p class="text-sm font-bold text-white leading-none truncate">Educlass</p>
+            </div>
         </div>
-        <button @click="sidebarOpen = false" class="lg:hidden text-gray-400 hover:text-gray-600">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <!-- Close button (mobile only) -->
+        <button @click="sidebarOpen = false"
+                class="lg:hidden flex-shrink-0 ml-1 p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-700 transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
             </svg>
         </button>
@@ -143,28 +151,24 @@
             @endphp
             @if($isKepalaSekolahRole)
             <a href="{{ route('akademik.lms.monitoring.index') }}"
-               class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 group {{ request()->routeIs('akademik.lms.monitoring.*') ? 'bg-gradient-to-r from-blue-500 to-cyan-400 text-white shadow-lg shadow-blue-500/50' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-                <span class="inline-flex items-center">
-                    <svg class="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h10"/>
-                    </svg>
-                    LMS
-                </span>
+               class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 group {{ request()->routeIs('akademik.lms.monitoring.*') ? 'bg-gradient-to-r from-blue-500 to-cyan-400 text-white shadow-lg shadow-blue-500/50' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                <svg class="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h10"/>
+                </svg>
+                LMS
             </a>
             @else
             <div x-data="{ lmsOpen: {{ $isLmsMenuActive ? 'true' : 'false' }} }" class="space-y-1">
                 <button
                     type="button"
                     @click="lmsOpen = !lmsOpen"
-                    class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 group {{ $isLmsMenuActive ? 'bg-gradient-to-r from-blue-500 to-cyan-400 text-white shadow-lg shadow-blue-500/50' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}"
+                    class="w-full flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 group {{ $isLmsMenuActive ? 'bg-gradient-to-r from-blue-500 to-cyan-400 text-white shadow-lg shadow-blue-500/50' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}"
                 >
-                    <span class="inline-flex items-center">
-                        <svg class="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h10"/>
-                        </svg>
-                        LMS
-                    </span>
-                    <span class="inline-flex h-6 w-6 items-center justify-center rounded-md bg-white/20">
+                    <svg class="w-5 h-5 mr-3 flex-shrink-0 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h10"/>
+                    </svg>
+                    <span class="flex-1 text-left">LMS</span>
+                    <span class="inline-flex h-6 w-6 items-center justify-center rounded-md bg-white/20 flex-shrink-0">
                         <svg class="w-4 h-4 transition-transform duration-200" :class="lmsOpen ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                         </svg>
@@ -409,6 +413,27 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
                 </svg>
                 Manajemen User
+            </a>
+
+            <!-- User Approvals -->
+            <a href="{{ route('admin.approvals.index') }}" 
+               class="flex items-center justify-between px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 group {{ request()->routeIs('admin.approvals.*') ? 'bg-gradient-to-r from-blue-500 to-cyan-400 text-white shadow-lg shadow-blue-500/50' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                <div class="flex items-center">
+                    <svg class="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+                    </svg>
+                    Persetujuan Akun
+                </div>
+                @php
+                    $pendingCount = \Illuminate\Support\Facades\Cache::remember('pending_users_count', now()->addMinutes(5), function () {
+                        return \App\Models\User::where('is_approved', false)->count();
+                    });
+                @endphp
+                @if($pendingCount > 0)
+                    <span class="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-500 rounded-full">
+                        {{ $pendingCount }}
+                    </span>
+                @endif
             </a>
 
             <!-- Role & Permission -->

@@ -119,7 +119,7 @@
 </head>
 <body>
     <div class="header">
-        <h1>{{ config('finance.school.name', 'Sriwijaya Kids') }}</h1>
+        <h1>{{ config('finance.school.name', 'Educlass') }}</h1>
         <h2>Laporan Pengeluaran</h2>
         <p>Periode {{ \Carbon\Carbon::parse($startDate)->format('d F Y') }} s.d {{ \Carbon\Carbon::parse($endDate)->format('d F Y') }}</p>
     </div>

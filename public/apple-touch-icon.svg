@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Educlass touch icon">
+  <defs>
+    <linearGradient id="touch-roof" x1="160" y1="40" x2="320" y2="160" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#a855f7"/>
+      <stop offset="1" stop-color="#7c3aed"/>
+    </linearGradient>
+    <linearGradient id="touch-core" x1="135" y1="130" x2="377" y2="360" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#e0f2fe"/>
+      <stop offset="1" stop-color="#dbeafe"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="80" fill="#0f172a"/>
+  <rect x="98" y="88" width="316" height="336" rx="42" fill="rgba(255,255,255,0.08)"/>
+  <path d="M156 174L256 98l100 76" fill="none" stroke="url(#touch-roof)" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="173" y="168" width="166" height="152" rx="22" fill="url(#touch-core)" stroke="#38bdf8" stroke-width="8"/>
+  <circle cx="256" cy="232" r="30" fill="#fff"/>
+  <circle cx="256" cy="232" r="10" fill="#2b2b2b"/>
+  <path d="M209 276 C228 266 284 266 303 276" fill="none" stroke="#fbbf24" stroke-width="10" stroke-linecap="round"/>
+  <path d="M160 346 C214 314 298 314 352 346" fill="none" stroke="#22d3ee" stroke-width="18" stroke-linecap="round"/>
+  <path d="M160 360 C214 332 298 332 352 360" fill="none" stroke="#2563eb" stroke-width="14" stroke-linecap="round" opacity="0.9"/>
+</svg>

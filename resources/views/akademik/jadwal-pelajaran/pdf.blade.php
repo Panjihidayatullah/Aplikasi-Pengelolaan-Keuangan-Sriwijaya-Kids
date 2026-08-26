@@ -118,7 +118,7 @@
     @endphp
 
     <div class="header">
-        <h1>{{ config('finance.school.name', 'Sriwijaya Kids') }}</h1>
+        <h1>{{ config('finance.school.name', 'Educlass') }}</h1>
         <h2>Data Jadwal Pelajaran</h2>
         <p>{{ $scopeLabel }}</p>
         @if(!empty($detailLabel))

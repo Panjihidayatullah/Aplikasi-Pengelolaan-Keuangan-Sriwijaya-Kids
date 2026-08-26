@@ -11,8 +11,12 @@
         <p class="text-slate-500">Isi form di bawah untuk mendaftar</p>
     </div>
 
-    <form method="POST" action="{{ route('register') }}" class="space-y-5">
+    <form method="POST" action="{{ route('register') }}" class="space-y-5" autocomplete="off">
         @csrf
+
+        <!-- Fake inputs to disable autofill -->
+        <input type="email" style="display:none" name="fakeemailremembered" aria-hidden="true">
+        <input type="password" style="display:none" name="fakepasswordremembered" aria-hidden="true">
 
         <!-- Name -->
         <div>
@@ -23,6 +27,7 @@
                    value="{{ old('name') }}" 
                    required 
                    autofocus 
+                   autocomplete="nope"
                    class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all duration-200 @error('name') border-red-500 @enderror"
                    placeholder="John Doe">
             @error('name')
@@ -43,7 +48,7 @@
                    name="email" 
                    value="{{ old('email') }}" 
                    required 
-                   autocomplete="off"
+                   autocomplete="nope"
                    class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all duration-200 @error('email') border-red-500 @enderror"
                    placeholder="nama@email.com">
             @error('email')
@@ -60,7 +65,7 @@
         <div>
             <label for="role" class="block text-sm font-semibold text-slate-700 mb-2">Role <span class="text-red-500">*</span></label>
             @php
-                $registrationRoles = ['Admin', 'Bendahara', 'Kepala Sekolah', 'Guru'];
+                $registrationRoles = ['Bendahara', 'Kepala Sekolah'];
             @endphp
             <select id="role" 
                     name="role" 
@@ -81,6 +86,25 @@
             @enderror
         </div>
 
+        <!-- Keterangan Registrasi -->
+        <div>
+            <label for="keterangan_registrasi" class="block text-sm font-semibold text-slate-700 mb-2">Keterangan / Alasan Mendaftar <span class="text-red-500">*</span></label>
+            <textarea id="keterangan_registrasi" 
+                      name="keterangan_registrasi" 
+                      required 
+                      rows="3"
+                      class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all duration-200 @error('keterangan_registrasi') border-red-500 @enderror"
+                      placeholder="Sebutkan posisi atau alasan Anda mendaftar...">{{ old('keterangan_registrasi') }}</textarea>
+            @error('keterangan_registrasi')
+                <p class="mt-2 text-sm text-red-600 flex items-center">
+                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                    </svg>
+                    {{ $message }}
+                </p>
+            @enderror
+        </div>
+
         <!-- Password -->
         <div>
             <label for="password" class="block text-sm font-semibold text-slate-700 mb-2">Password <span class="text-red-500">*</span></label>
@@ -89,7 +113,7 @@
                        type="password" 
                        name="password" 
                        required 
-                       autocomplete="off"
+                       autocomplete="new-password"
                        class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all duration-200 @error('password') border-red-500 @enderror"
                        placeholder="••••••••">
                 <button type="button" 
@@ -122,7 +146,7 @@
                        type="password" 
                        name="password_confirmation" 
                        required 
-                       autocomplete="off"
+                       autocomplete="new-password"
                        class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all duration-200"
                        placeholder="••••••••">
                 <button type="button" 

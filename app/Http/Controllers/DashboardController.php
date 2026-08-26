@@ -15,6 +15,7 @@ use App\Models\PengumpulanTugas;
 use App\Models\User;
 use App\Services\UserService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
@@ -35,7 +36,10 @@ class DashboardController extends Controller
         $dashboardRole = $this->resolveDashboardRole($user);
 
         if ($dashboardRole === 'guru') {
-            $guruData = $this->buildGuruDashboardData($user);
+            $cacheKey = 'dashboard.guru.' . $user->id;
+            $guruData = Cache::remember($cacheKey, now()->addMinutes(2), function () use ($user) {
+                return $this->buildGuruDashboardData($user);
+            });
 
             return view('dashboard.index', array_merge([
                 'dashboardRole' => 'guru',
@@ -44,7 +48,10 @@ class DashboardController extends Controller
         }
 
         if ($dashboardRole === 'siswa') {
-            $siswaData = $this->buildSiswaDashboardData($user);
+            $cacheKey = 'dashboard.siswa.' . $user->id;
+            $siswaData = Cache::remember($cacheKey, now()->addMinutes(2), function () use ($user) {
+                return $this->buildSiswaDashboardData($user);
+            });
 
             return view('dashboard.index', array_merge([
                 'dashboardRole' => 'siswa',
@@ -54,99 +61,109 @@ class DashboardController extends Controller
 
         $defaultDashboardAccess = $this->buildDefaultDashboardAccess($user);
 
-        // Data untuk dashboard
-        $totalSiswa = Siswa::where('is_active', true)->count();
-        $totalPembayaran = Pembayaran::whereMonth('tanggal_bayar', now()->month)
-            ->whereYear('tanggal_bayar', now()->year)
-            ->sum('jumlah');
-        $totalPengeluaran = Pengeluaran::whereMonth('tanggal', now()->month)
-            ->whereYear('tanggal', now()->year)
-            ->sum('jumlah');
-        $saldo = $totalPembayaran - $totalPengeluaran;
+        // Cache semua counter ringkasan dashboard selama 2 menit (hemat ~10 query cloud DB)
+        $summaryStats = Cache::remember('dashboard.admin.summary', now()->addMinutes(2), function () {
+            return [
+                'totalSiswa'   => Siswa::where('is_active', true)->count(),
+                'totalPembayaran' => (float) Pembayaran::whereMonth('tanggal_bayar', now()->month)
+                    ->whereYear('tanggal_bayar', now()->year)->sum('jumlah'),
+                'totalPengeluaran' => (float) Pengeluaran::whereMonth('tanggal', now()->month)
+                    ->whereYear('tanggal', now()->year)->sum('jumlah'),
+                'totalKelas'   => Kelas::query()->count(),
+                'totalJadwalAktif'    => JadwalPelajaran::where('is_active', true)->count(),
+                'totalUjianMendatang' => Ujian::whereDate('tanggal_ujian', '>=', now()->toDateString())->count(),
+                'totalMateri'         => Materi::query()->count(),
+                'totalTugas'          => Tugas::query()->count(),
+                'totalPengumpulan'    => PengumpulanTugas::query()->count(),
+                'transaksiKeuanganBulanIni' =>
+                    Pembayaran::whereMonth('tanggal_bayar', now()->month)->whereYear('tanggal_bayar', now()->year)->count()
+                    + Pengeluaran::whereMonth('tanggal', now()->month)->whereYear('tanggal', now()->year)->count(),
+            ];
+        });
 
-        // Ringkasan gabungan modul Akademik + LMS + Keuangan
-        $totalKelas = Kelas::query()->count();
-        $totalJadwalAktif = JadwalPelajaran::query()->where('is_active', true)->count();
-        $totalUjianMendatang = Ujian::query()->whereDate('tanggal_ujian', '>=', now()->toDateString())->count();
+        $totalSiswa                = $summaryStats['totalSiswa'];
+        $totalPembayaran           = $summaryStats['totalPembayaran'];
+        $totalPengeluaran          = $summaryStats['totalPengeluaran'];
+        $saldo                     = $totalPembayaran - $totalPengeluaran;
+        $totalKelas                = $summaryStats['totalKelas'];
+        $totalJadwalAktif          = $summaryStats['totalJadwalAktif'];
+        $totalUjianMendatang       = $summaryStats['totalUjianMendatang'];
+        $totalMateri               = $summaryStats['totalMateri'];
+        $totalTugas                = $summaryStats['totalTugas'];
+        $totalPengumpulan          = $summaryStats['totalPengumpulan'];
+        $transaksiKeuanganBulanIni = $summaryStats['transaksiKeuanganBulanIni'];
 
-        $totalMateri = Materi::query()->count();
-        $totalTugas = Tugas::query()->count();
-        $totalPengumpulan = PengumpulanTugas::query()->count();
 
-        $transaksiKeuanganBulanIni = Pembayaran::query()
-            ->whereMonth('tanggal_bayar', now()->month)
-            ->whereYear('tanggal_bayar', now()->year)
-            ->count()
-            + Pengeluaran::query()
-                ->whereMonth('tanggal', now()->month)
-                ->whereYear('tanggal', now()->year)
-                ->count();
 
-        $expenseComposition = Pengeluaran::query()
-            ->leftJoin('jenis_pengeluaran', 'pengeluaran.jenis_pengeluaran_id', '=', 'jenis_pengeluaran.id')
-            ->whereMonth('pengeluaran.tanggal', now()->month)
-            ->whereYear('pengeluaran.tanggal', now()->year)
-            ->selectRaw("COALESCE(jenis_pengeluaran.nama, 'Lainnya') as kategori")
-            ->selectRaw('SUM(pengeluaran.jumlah) as total')
-            ->groupBy('jenis_pengeluaran.nama')
-            ->orderByDesc('total')
-            ->limit(6)
-            ->get()
-            ->map(fn ($item) => [
-                'kategori' => (string) $item->kategori,
-                'total' => (float) $item->total,
-            ])
-            ->values();
+        $expenseComposition = Cache::remember('dashboard.admin.expense_comp_' . now()->month . now()->year, now()->addMinutes(2), function () {
+            return Pengeluaran::query()
+                ->leftJoin('jenis_pengeluaran', 'pengeluaran.jenis_pengeluaran_id', '=', 'jenis_pengeluaran.id')
+                ->whereMonth('pengeluaran.tanggal', now()->month)
+                ->whereYear('pengeluaran.tanggal', now()->year)
+                ->selectRaw("COALESCE(jenis_pengeluaran.nama, 'Lainnya') as kategori")
+                ->selectRaw('SUM(pengeluaran.jumlah) as total')
+                ->groupBy('jenis_pengeluaran.nama')
+                ->orderByDesc('total')
+                ->limit(6)
+                ->get()
+                ->map(fn ($item) => [
+                    'kategori' => (string) $item->kategori,
+                    'total' => (float) $item->total,
+                ])
+                ->values();
+        });
 
-        $pembayaranTerbaru = Pembayaran::query()
-            ->with(['siswa:id,nama', 'jenis:id,nama'])
-            ->select('id', 'tanggal_bayar', 'jumlah', 'status', 'siswa_id', 'jenis_pembayaran_id')
-            ->latest('tanggal_bayar')
-            ->limit(8)
-            ->get()
-            ->map(fn ($item) => [
-                'tanggal' => optional($item->tanggal_bayar)?->format('Y-m-d'),
-                'sort_at' => optional($item->tanggal_bayar)?->timestamp ?? 0,
-                'deskripsi' => trim(
-                    sprintf(
-                        '%s%s',
-                        $item->jenis?->nama ? 'Pembayaran ' . $item->jenis->nama : 'Pembayaran',
-                        $item->siswa?->nama ? ' - ' . $item->siswa->nama : ''
-                    )
-                ),
-                'tipe' => 'Pemasukan',
-                'jumlah' => (float) $item->jumlah,
-                'status' => $item->status ?: 'Lunas',
-                'url' => route('pembayaran.index'),
-            ]);
+        $recentTransactions = Cache::remember('dashboard.admin.recent_trx', now()->addMinutes(1), function () {
+            $pembayaranTerbaru = Pembayaran::query()
+                ->with(['siswa:id,nama', 'jenis:id,nama'])
+                ->select('id', 'tanggal_bayar', 'jumlah', 'status', 'siswa_id', 'jenis_pembayaran_id')
+                ->latest('tanggal_bayar')
+                ->limit(8)
+                ->get()
+                ->map(fn ($item) => [
+                    'tanggal' => optional($item->tanggal_bayar)?->format('Y-m-d'),
+                    'sort_at' => optional($item->tanggal_bayar)?->timestamp ?? 0,
+                    'deskripsi' => trim(
+                        sprintf(
+                            '%s%s',
+                            $item->jenis?->nama ? 'Pembayaran ' . $item->jenis->nama : 'Pembayaran',
+                            $item->siswa?->nama ? ' - ' . $item->siswa->nama : ''
+                        )
+                    ),
+                    'tipe' => 'Pemasukan',
+                    'jumlah' => (float) $item->jumlah,
+                    'status' => $item->status ?: 'Lunas',
+                    'url' => route('pembayaran.index'),
+                ]);
 
-        $pengeluaranTerbaru = Pengeluaran::query()
-            ->with(['jenis:id,nama'])
-            ->select('id', 'tanggal', 'jumlah', 'status', 'jenis_pengeluaran_id', 'keterangan')
-            ->latest('tanggal')
-            ->limit(8)
-            ->get()
-            ->map(fn ($item) => [
-                'tanggal' => optional($item->tanggal)?->format('Y-m-d'),
-                'sort_at' => optional($item->tanggal)?->timestamp ?? 0,
-                'deskripsi' => trim(
-                    sprintf(
-                        '%s%s',
-                        $item->jenis?->nama ? $item->jenis->nama : 'Pengeluaran',
-                        $item->keterangan ? ' - ' . $item->keterangan : ''
-                    )
-                ),
-                'tipe' => 'Pengeluaran',
-                'jumlah' => (float) $item->jumlah,
-                'status' => $item->status ?: 'Disetujui',
-                'url' => route('pengeluaran.index'),
-            ]);
+            $pengeluaranTerbaru = Pengeluaran::query()
+                ->with(['jenis:id,nama'])
+                ->select('id', 'tanggal', 'jumlah', 'status', 'jenis_pengeluaran_id', 'keterangan')
+                ->latest('tanggal')
+                ->limit(8)
+                ->get()
+                ->map(fn ($item) => [
+                    'tanggal' => optional($item->tanggal)?->format('Y-m-d'),
+                    'sort_at' => optional($item->tanggal)?->timestamp ?? 0,
+                    'deskripsi' => trim(
+                        sprintf(
+                            '%s%s',
+                            $item->jenis?->nama ? $item->jenis->nama : 'Pengeluaran',
+                            $item->keterangan ? ' - ' . $item->keterangan : ''
+                        )
+                    ),
+                    'tipe' => 'Pengeluaran',
+                    'jumlah' => (float) $item->jumlah,
+                    'status' => $item->status ?: 'Disetujui',
+                    'url' => route('pengeluaran.index'),
+                ]);
 
-        $recentTransactions = $pembayaranTerbaru
-            ->concat($pengeluaranTerbaru)
-            ->sortByDesc('sort_at')
-            ->take(8)
-            ->values();
+            return $pembayaranTerbaru
+                ->concat($pengeluaranTerbaru)
+                ->sortByDesc('sort_at')
+                ->take(8)
+                ->values();
+        });
         
         // Data untuk chart dengan filter
         $startDate = $request->input('chart_start_date', now()->subMonths(5)->startOfMonth()->format('Y-m-d'));
@@ -400,17 +417,13 @@ class DashboardController extends Controller
             ->where('guru_id', $guru->id)
             ->where('is_active', true);
 
-        $mapelIds = (clone $jadwalAktif)
-            ->pluck('mata_pelajaran_id')
-            ->filter()
-            ->unique()
-            ->values();
+        // 1 query untuk ambil kelas_id & mapel_id sekaligus (bukan 2 pluck terpisah)
+        $jadwalRows = (clone $jadwalAktif)
+            ->select(['kelas_id', 'mata_pelajaran_id'])
+            ->get();
 
-        $kelasIds = (clone $jadwalAktif)
-            ->pluck('kelas_id')
-            ->filter()
-            ->unique()
-            ->values();
+        $mapelIds = $jadwalRows->pluck('mata_pelajaran_id')->filter()->unique()->values();
+        $kelasIds = $jadwalRows->pluck('kelas_id')->filter()->unique()->values();
 
         $pengumpulanQuery = PengumpulanTugas::query()
             ->whereHas('tugas', function ($q) use ($guru) {
@@ -431,26 +444,31 @@ class DashboardController extends Controller
             'belum_dinilai' => (clone $pengumpulanQuery)->whereNull('nilai')->count(),
         ];
 
+        // Ganti loop 6x query dengan 2 aggregate GROUP BY sekaligus
         $startMonth = now()->copy()->subMonths(5)->startOfMonth();
+        $endMonth   = now()->copy()->endOfMonth();
+
+        $monthlyTugasRaw = Tugas::query()
+            ->selectRaw("TO_CHAR(created_at, 'YYYY-MM') as bulan, COUNT(*) as total")
+            ->where('guru_id', $guru->id)
+            ->whereBetween('created_at', [$startMonth, $endMonth])
+            ->groupByRaw("TO_CHAR(created_at, 'YYYY-MM')")
+            ->pluck('total', 'bulan');
+
+        $monthlyPengumpulanRaw = PengumpulanTugas::query()
+            ->selectRaw("TO_CHAR(pengumpulan_tugas.created_at, 'YYYY-MM') as bulan, COUNT(*) as total")
+            ->join('tugas', 'pengumpulan_tugas.tugas_id', '=', 'tugas.id')
+            ->where('tugas.guru_id', $guru->id)
+            ->whereBetween('pengumpulan_tugas.created_at', [$startMonth, $endMonth])
+            ->groupByRaw("TO_CHAR(pengumpulan_tugas.created_at, 'YYYY-MM')")
+            ->pluck('total', 'bulan');
+
         $cursor = $startMonth->copy();
-
         while ($cursor->lte(now())) {
-            $monthStart = $cursor->copy()->startOfMonth();
-            $monthEnd = $cursor->copy()->endOfMonth();
-
-            $guruMonthlyLabels[] = $cursor->translatedFormat('M Y');
-            $guruMonthlyTugas[] = Tugas::query()
-                ->where('guru_id', $guru->id)
-                ->whereBetween('created_at', [$monthStart, $monthEnd])
-                ->count();
-
-            $guruMonthlyPengumpulan[] = PengumpulanTugas::query()
-                ->whereHas('tugas', function ($q) use ($guru) {
-                    $q->where('guru_id', $guru->id);
-                })
-                ->whereBetween('created_at', [$monthStart, $monthEnd])
-                ->count();
-
+            $key = $cursor->format('Y-m');
+            $guruMonthlyLabels[]      = $cursor->translatedFormat('M Y');
+            $guruMonthlyTugas[]       = (int) ($monthlyTugasRaw[$key] ?? 0);
+            $guruMonthlyPengumpulan[] = (int) ($monthlyPengumpulanRaw[$key] ?? 0);
             $cursor = $cursor->addMonth();
         }
 

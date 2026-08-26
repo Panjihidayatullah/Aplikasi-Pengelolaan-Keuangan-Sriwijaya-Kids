@@ -10,7 +10,7 @@
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│         SRIWIJAYA KIDS - ACADEMIC MODULE SYSTEM           │
+│         EDUCLASS - ACADEMIC MODULE SYSTEM                 │
 ├─────────────────────────────────────────────────────────────┤
 │                                                             │
 │  ✅ DATABASE: 12 Tables (Migrated & Ready)                 │
@@ -525,7 +525,7 @@ php artisan tinker
 
 ## 🎉 CONCLUSION
 
-**The Academic Module for Sriwijaya Kids is now PRODUCTION READY!**
+**The Academic Module for Educlass is now PRODUCTION READY!**
 
 The entire backend infrastructure has been successfully implemented with:
 - ✅ Complete database schema
@@ -545,7 +545,7 @@ The entire backend infrastructure has been successfully implemented with:
 
 ---
 
-**Thank you for using the Sriwijaya Kids Academic Module System!**
+**Thank you for using the Educlass Academic Module System!**
 
 *For support, refer to the documentation files or review the inline code comments.*
 

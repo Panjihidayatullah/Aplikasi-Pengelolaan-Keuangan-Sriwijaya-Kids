@@ -33,8 +33,8 @@
     <!-- Print Receipt Header (Hidden on screen, shown on print) -->
     <div class="print-only" style="display: none;">
         <div style="text-align: center; border-bottom: 2px dashed #000; padding-bottom: 16px; margin-bottom: 16px;">
-            <h1 style="font-size: 20px; font-weight: bold; margin: 0;">{{ config('finance.school.name', 'Sriwijaya Kids') }}</h1>
-            <p style="font-size: 12px; margin: 4px 0;">SMA SRIWIJAYA</p>
+            <h1 style="font-size: 20px; font-weight: bold; margin: 0;">{{ config('finance.school.name', 'Educlass') }}</h1>
+            <p style="font-size: 12px; margin: 4px 0;">Educlass</p>
             <p style="font-size: 11px; margin: 2px 0;">Jl. Pendidikan No. 123, Palembang</p>
             <p style="font-size: 11px; margin: 2px 0;">Telp: (0711) 123456</p>
         </div>
@@ -242,7 +242,7 @@
         <div style="margin-top: 24px; text-align: center; font-size: 10px; color: #666;">
             <p style="margin: 4px 0;">*** Terima kasih atas pembayaran Anda ***</p>
             <p style="margin: 4px 0;">Bukti pembayaran ini sah dan diproses oleh sistem</p>
-            <p style="margin: 4px 0;">{{ config('finance.school.name', 'Sriwijaya Kids') }} - {{ now()->format('Y') }}</p>
+            <p style="margin: 4px 0;">{{ config('finance.school.name', 'Educlass') }} - {{ now()->format('Y') }}</p>
         </div>
     </div>
 </div>

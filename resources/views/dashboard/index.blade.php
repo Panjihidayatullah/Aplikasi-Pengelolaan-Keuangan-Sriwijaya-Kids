@@ -5,54 +5,116 @@
 
 @push('styles')
 <style>
+    /* ── Button styles ── */
     .mod-overview-btn {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        padding: 0.375rem 0.75rem;
+        padding: 0.4rem 0.85rem;
         border-radius: 0.6rem;
         font-size: 0.75rem;
         font-weight: 600;
         line-height: 1;
         border: 1px solid transparent;
         transition: all 0.2s ease;
+        min-height: 34px;
+    }
+    .mod-overview-btn-lms { background:#059669!important; color:#fff!important; border-color:#047857!important; }
+    .mod-overview-btn-lms:hover { background:#047857!important; }
+    .mod-overview-btn-fin { background:#f59e0b!important; color:#111827!important; border-color:#d97706!important; }
+    .mod-overview-btn-fin:hover { background:#fbbf24!important; }
+    .mod-overview-btn-fin-alt { background:#4f46e5!important; color:#fff!important; border-color:#4338ca!important; }
+    .mod-overview-btn-fin-alt:hover { background:#4338ca!important; }
+
+    /* ── Mobile: Welcome Banner ── */
+    @media (max-width: 640px) {
+        .dash-welcome { padding: 1rem 1.25rem !important; border-radius: 1rem !important; margin-bottom: 1rem !important; }
+        .dash-welcome h1 { font-size: 1.25rem !important; margin-bottom: 0.25rem !important; }
+        .dash-welcome p  { font-size: 0.8rem !important; }
     }
 
-    .mod-overview-btn-lms {
-        background: #059669 !important;
-        color: #ffffff !important;
-        border-color: #047857 !important;
+    /* ── Mobile: Module Overview Cards — Horizontal Snap Scroll ── */
+    @media (max-width: 640px) {
+        /* Turn the grid into a horizontal scroll strip */
+        .dash-module-grid {
+            display: flex !important;
+            flex-direction: row !important;
+            flex-wrap: nowrap !important;
+            gap: 0.75rem !important;
+            overflow-x: auto !important;
+            overflow-y: visible !important;
+            scroll-snap-type: x mandatory !important;
+            -webkit-overflow-scrolling: touch !important;
+            padding-bottom: 0.5rem !important;
+            margin-left: -0.75rem !important;
+            margin-right: -0.75rem !important;
+            padding-left: 0.75rem !important;
+            padding-right: 0.75rem !important;
+        }
+        /* Hide scrollbar but keep scroll functionality */
+        .dash-module-grid::-webkit-scrollbar { display: none; }
+        .dash-module-grid { scrollbar-width: none; }
+
+        /* Each card: snap to center, 82% viewport width */
+        .dash-module-card {
+            flex: 0 0 82vw !important;
+            max-width: 82vw !important;
+            scroll-snap-align: start !important;
+            border-radius: 1rem !important;
+            padding: 1rem !important;
+            min-width: 0 !important;
+        }
+        /* lg:col-span-X classes must not affect flex */
+        .dash-module-card[class*="col-span"] {
+            grid-column: unset !important;
+        }
+
+        /* Finance sub-grid: 3 items side by side */
+        .dash-fin-grid { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 0.5rem !important; }
+        .dash-fin-grid .flex-col span:first-child { font-size: 0.7rem !important; }
+        .dash-fin-grid .flex-col span:last-child  { font-size: 0.9rem !important; }
+    }
+    @media (min-width: 641px) and (max-width: 1023px) {
+        .dash-module-grid { display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 1rem !important; }
     }
 
-    .mod-overview-btn-lms:hover {
-        background: #047857 !important;
+
+    /* ── Mobile: Financial Stat Cards (Saldo/Siswa/Pemasukan/Pengeluaran) ── */
+    @media (max-width: 640px) {
+        .dash-stat-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 0.625rem !important; }
+        .dash-stat-card .p-5 { padding: 0.875rem !important; }
+        .dash-stat-card .text-2xl { font-size: 1.1rem !important; }
+        .dash-stat-card .w-12 { width: 2.25rem !important; height: 2.25rem !important; }
+        .dash-stat-card .w-7 { width: 1.25rem !important; height: 1.25rem !important; }
+        .dash-stat-card .px-5.py-2\.5 { padding: 0.4rem 0.875rem !important; }
     }
 
-    .mod-overview-btn-fin {
-        background: #f59e0b !important;
-        color: #111827 !important;
-        border-color: #d97706 !important;
+    /* ── Mobile: Charts ── */
+    @media (max-width: 640px) {
+        .dash-chart-grid { grid-template-columns: 1fr !important; }
+        .dash-chart-grid .h-56 { height: 180px !important; }
+        .dash-chart-filter { flex-direction: column !important; gap: 0.375rem !important; }
+        .dash-chart-filter input { font-size: 0.75rem !important; width: 100% !important; }
     }
 
-    .mod-overview-btn-fin:hover {
-        background: #fbbf24 !important;
+    /* ── Mobile: Transactions + Quick Actions ── */
+    @media (max-width: 640px) {
+        .dash-bottom-grid { grid-template-columns: 1fr !important; }
+        .dash-quick-actions .p-2\.5 { padding: 0.625rem !important; }
     }
 
-    .mod-overview-btn-fin-alt {
-        background: #4f46e5 !important;
-        color: #ffffff !important;
-        border-color: #4338ca !important;
-    }
-
-    .mod-overview-btn-fin-alt:hover {
-        background: #4338ca !important;
+    /* ── Tablet ── */
+    @media (min-width: 641px) and (max-width: 1023px) {
+        .dash-stat-grid { grid-template-columns: repeat(2, 1fr) !important; }
+        .dash-chart-grid { grid-template-columns: 1fr !important; }
+        .dash-bottom-grid { grid-template-columns: 1fr !important; }
     }
 </style>
 @endpush
 
 @section('content')
 <!-- Welcome Banner -->
-<div class="relative overflow-hidden bg-gradient-to-br from-blue-600 via-cyan-500 to-blue-700 rounded-2xl shadow-2xl shadow-blue-500/30 p-6 mb-6">
+<div class="dash-welcome relative overflow-hidden bg-gradient-to-br from-blue-600 via-cyan-500 to-blue-700 rounded-2xl shadow-2xl shadow-blue-500/30 p-6 mb-6">
     <!-- Background Pattern -->
     <div class="absolute inset-0 opacity-10">
         <div class="absolute inset-0" style="background-image: radial-gradient(circle at 1px 1px, white 1px, transparent 0); background-size: 40px 40px;"></div>
@@ -61,7 +123,7 @@
     <div class="relative flex items-center justify-between">
         <div>
             <h1 class="text-2xl font-bold text-white mb-1">Selamat Datang, {{ Auth::user()->name }}! 👋</h1>
-            <p class="text-blue-100 text-sm">{{ $dashboardSubtitle ?? (config('finance.school.name', 'Sekolah') . ' - Dashboard Terpadu Akademik, LMS, dan Keuangan') }}</p>
+            <p class="text-blue-100 text-sm">{{ $dashboardSubtitle ?? (config('finance.school.name', 'Educlass') . ' - Dashboard Terpadu Akademik, LMS, dan Keuangan') }}</p>
         </div>
         <div class="hidden md:flex items-center space-x-3">
             <div class="bg-white/20 backdrop-blur-sm rounded-2xl px-5 py-3 text-white">
@@ -110,9 +172,9 @@
 @endphp
 
 <!-- Modul Terpadu Overview -->
-<div class="grid grid-cols-1 gap-5 mb-6 {{ ($dashboardRole ?? 'default') === 'bendahara' ? '' : 'lg:grid-cols-12' }}">
+<div class="dash-module-grid grid grid-cols-1 gap-5 mb-6 {{ ($dashboardRole ?? 'default') === 'bendahara' ? '' : 'lg:grid-cols-12' }}">
     @if(($dashboardRole ?? 'default') !== 'bendahara')
-    <div class="rounded-2xl shadow-lg shadow-blue-100/70 p-5 border border-blue-200 bg-gradient-to-br from-blue-50 to-cyan-50 {{ ($dashboardRole ?? 'default') === 'bendahara' ? '' : 'lg:col-span-3' }}">
+    <div class="dash-module-card rounded-2xl shadow-lg shadow-blue-100/70 p-5 border border-blue-200 bg-gradient-to-br from-blue-50 to-cyan-50 {{ ($dashboardRole ?? 'default') === 'bendahara' ? '' : 'lg:col-span-3' }}">
         <div class="flex items-center justify-between mb-4">
             <h3 class="text-base font-bold text-blue-900">Akademik</h3>
             <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-200 text-blue-800">Aktif</span>
@@ -138,7 +200,7 @@
         </div>
     </div>
 
-    <div class="rounded-2xl shadow-lg shadow-emerald-100/70 p-5 border border-emerald-200 bg-gradient-to-br from-emerald-50 to-teal-50 {{ ($dashboardRole ?? 'default') === 'bendahara' ? '' : 'lg:col-span-4' }}">
+    <div class="dash-module-card rounded-2xl shadow-lg shadow-emerald-100/70 p-5 border border-emerald-200 bg-gradient-to-br from-emerald-50 to-teal-50 {{ ($dashboardRole ?? 'default') === 'bendahara' ? '' : 'lg:col-span-4' }}">
         <div class="flex items-center justify-between mb-4">
             <h3 class="text-base font-bold text-emerald-900">LMS</h3>
             <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-200 text-emerald-800">Online</span>
@@ -168,12 +230,12 @@
     </div>
     @endif
 
-    <div class="rounded-2xl shadow-lg shadow-amber-100/80 p-5 border border-amber-200 bg-gradient-to-br from-amber-50 to-orange-50 {{ ($dashboardRole ?? 'default') === 'bendahara' ? 'w-full' : 'lg:col-span-5' }}">
+    <div class="dash-module-card rounded-2xl shadow-lg shadow-amber-100/80 p-5 border border-amber-200 bg-gradient-to-br from-amber-50 to-orange-50 {{ ($dashboardRole ?? 'default') === 'bendahara' ? 'w-full' : 'lg:col-span-5' }}">
         <div class="flex items-center justify-between mb-4">
             <h3 class="text-base font-bold text-amber-900">Ringkasan Keuangan</h3>
             <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-200 text-amber-900">Bulan Ini</span>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+        <div class="dash-fin-grid grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
             <div class="flex flex-col"><span class="text-amber-800 mb-1">Pemasukan</span><span class="text-lg font-bold text-emerald-700">{{ format_rupiah($totalPembayaran) }}</span></div>
             <div class="flex flex-col"><span class="text-amber-800 mb-1">Pengeluaran</span><span class="text-lg font-bold text-rose-700">{{ format_rupiah($totalPengeluaran) }}</span></div>
             <div class="flex flex-col"><span class="text-amber-800 mb-1">Total Transaksi</span><span class="text-lg font-bold text-amber-950">{{ number_format($transaksiKeuanganBulanIni) }}</span></div>
@@ -195,26 +257,29 @@
     </div>
 </div>
 
+<!-- Scroll indicator — visible only on mobile (hidden on md+) -->
+<div class="dash-module-scroll-hint hidden" id="moduleScrollDots">
+    <span class="w-2 h-2 rounded-full bg-blue-400 opacity-80"></span>
+    <span class="w-2 h-2 rounded-full bg-slate-300"></span>
+    <span class="w-2 h-2 rounded-full bg-slate-300"></span>
+</div>
+
 <!-- Financial Summary Cards -->
-<div class="grid grid-cols-1 gap-5 mb-6 lg:grid-cols-4">
+
+<div class="dash-stat-grid grid grid-cols-1 gap-5 mb-6 lg:grid-cols-4">
     <!-- Saldo Card -->
-    <div class="group relative bg-gradient-to-br from-blue-500 to-cyan-400 rounded-2xl shadow-xl shadow-blue-500/40 overflow-hidden hover:shadow-2xl hover:shadow-blue-500/50 transition-all duration-300 hover:-translate-y-1">
+    <div class="dash-stat-card group relative bg-gradient-to-br from-blue-500 to-cyan-400 rounded-2xl shadow-xl shadow-blue-500/40 overflow-hidden hover:shadow-2xl hover:shadow-blue-500/50 transition-all duration-300 hover:-translate-y-1">
         <!-- Animated Background -->
         <div class="absolute inset-0 opacity-20">
             <div class="absolute inset-0" style="background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0); background-size: 30px 30px;"></div>
         </div>
         
-        <div class="relative p-5">
+        <div class="relative p-5 h-full flex flex-col justify-between">
             <div class="flex items-start justify-between">
                 <div class="flex-1">
                     <p class="text-xs font-semibold text-blue-100 uppercase tracking-wide">Saldo Saat Ini</p>
                     <p class="text-2xl font-bold text-white mt-2 mb-1.5">{{ format_rupiah($saldo) }}</p>
-                    <div class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-white/20 backdrop-blur-sm">
-                        <svg class="w-3.5 h-3.5 mr-1 text-white" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd"/>
-                        </svg>
-                        <span class="text-xs font-bold text-white">Sehat</span>
-                    </div>
+
                 </div>
                 <div class="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                     <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -222,24 +287,25 @@
                     </svg>
                 </div>
             </div>
-        </div>
-        <div class="relative bg-white/10 backdrop-blur-sm px-5 py-2.5 border-t border-white/20">
-            @if($canViewCashflow && !$isKepalaSekolahRole)
-            <a href="{{ route('laporan.cashflow') }}" class="flex items-center justify-between text-xs font-semibold text-white hover:text-blue-100 transition-colors group">
-                <span>Lihat Detail</span>
-                <svg class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
-                </svg>
-            </a>
-            @else
-            <span class="text-xs font-semibold text-white/80">Aksi keuangan dibatasi</span>
-            @endif
+            
+            <div class="mt-4 pt-4 border-t border-white/20">
+                @if($canViewCashflow && !$isKepalaSekolahRole)
+                <a href="{{ route('laporan.cashflow') }}" class="flex items-center justify-between text-xs font-semibold text-white hover:text-blue-100 transition-colors group">
+                    <span>Lihat Detail</span>
+                    <svg class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                    </svg>
+                </a>
+                @else
+                <span class="text-xs font-semibold text-white/80">Aksi keuangan dibatasi</span>
+                @endif
+            </div>
         </div>
     </div>
 
     <!-- Total Siswa / Transaksi Card -->
-    <div class="group relative bg-white rounded-2xl shadow-lg shadow-slate-200 overflow-hidden hover:shadow-xl hover:shadow-slate-300 transition-all duration-300 hover:-translate-y-1">
-        <div class="p-5">
+    <div class="dash-stat-card group relative bg-white rounded-2xl shadow-lg shadow-slate-200 overflow-hidden hover:shadow-xl hover:shadow-slate-300 transition-all duration-300 hover:-translate-y-1">
+        <div class="p-5 h-full flex flex-col justify-between">
             <div class="flex items-start justify-between">
                 <div class="flex-1">
                     @if(($dashboardRole ?? 'default') === 'bendahara')
@@ -270,33 +336,34 @@
                     @endif
                 </div>
             </div>
-        </div>
-        <div class="bg-slate-50 px-5 py-2.5 border-t border-slate-100">
-            @if(($dashboardRole ?? 'default') === 'bendahara')
-                <a href="{{ route('riwayat.index') }}" class="flex items-center justify-between text-xs font-semibold text-slate-600 hover:text-emerald-600 transition-colors group">
-                    <span>Lihat Riwayat</span>
-                    <svg class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
-                    </svg>
-                </a>
-            @else
-                @if($canViewSiswa)
-                <a href="{{ route('siswa.index') }}" class="flex items-center justify-between text-xs font-semibold text-slate-600 hover:text-emerald-600 transition-colors group">
-                    <span>Lihat Siswa</span>
-                    <svg class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
-                    </svg>
-                </a>
+
+            <div class="mt-4 pt-4 border-t border-slate-100">
+                @if(($dashboardRole ?? 'default') === 'bendahara')
+                    <a href="{{ route('riwayat.index') }}" class="flex items-center justify-between text-xs font-semibold text-slate-600 hover:text-emerald-600 transition-colors group">
+                        <span>Lihat Riwayat</span>
+                        <svg class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                        </svg>
+                    </a>
                 @else
-                <span class="text-xs font-semibold text-slate-500">Akses siswa dibatasi</span>
+                    @if($canViewSiswa)
+                    <a href="{{ route('siswa.index') }}" class="flex items-center justify-between text-xs font-semibold text-slate-600 hover:text-emerald-600 transition-colors group">
+                        <span>Lihat Siswa</span>
+                        <svg class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                        </svg>
+                    </a>
+                    @else
+                    <span class="text-xs font-semibold text-slate-500">Akses siswa dibatasi</span>
+                    @endif
                 @endif
-            @endif
+            </div>
         </div>
     </div>
 
     <!-- Total Pembayaran Card -->
-    <div class="group relative bg-white rounded-2xl shadow-lg shadow-slate-200 overflow-hidden hover:shadow-xl hover:shadow-slate-300 transition-all duration-300 hover:-translate-y-1">
-        <div class="p-5">
+    <div class="dash-stat-card group relative bg-white rounded-2xl shadow-lg shadow-slate-200 overflow-hidden hover:shadow-xl hover:shadow-slate-300 transition-all duration-300 hover:-translate-y-1">
+        <div class="p-5 h-full flex flex-col justify-between">
             <div class="flex items-start justify-between">
                 <div class="flex-1">
                     <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Pemasukan Bulan Ini</p>
@@ -314,24 +381,25 @@
                     </svg>
                 </div>
             </div>
-        </div>
-        <div class="bg-slate-50 px-5 py-2.5 border-t border-slate-100">
-            @if($canViewPembayaran && !$isKepalaSekolahRole)
-            <a href="{{ route('pembayaran.index') }}" class="flex items-center justify-between text-xs font-semibold text-slate-600 hover:text-blue-600 transition-colors group">
-                <span>Lihat Transaksi</span>
-                <svg class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
-                </svg>
-            </a>
-            @else
-            <span class="text-xs font-semibold text-slate-500">Aksi keuangan dibatasi</span>
-            @endif
+
+            <div class="mt-4 pt-4 border-t border-slate-100">
+                @if($canViewPembayaran && !$isKepalaSekolahRole)
+                <a href="{{ route('pembayaran.index') }}" class="flex items-center justify-between text-xs font-semibold text-slate-600 hover:text-blue-600 transition-colors group">
+                    <span>Lihat Transaksi</span>
+                    <svg class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                    </svg>
+                </a>
+                @else
+                <span class="text-xs font-semibold text-slate-500">Aksi keuangan dibatasi</span>
+                @endif
+            </div>
         </div>
     </div>
 
     <!-- Total Pengeluaran Card -->
-    <div class="group relative bg-white rounded-2xl shadow-lg shadow-slate-200 overflow-hidden hover:shadow-xl hover:shadow-slate-300 transition-all duration-300 hover:-translate-y-1">
-        <div class="p-5">
+    <div class="dash-stat-card group relative bg-white rounded-2xl shadow-lg shadow-slate-200 overflow-hidden hover:shadow-xl hover:shadow-slate-300 transition-all duration-300 hover:-translate-y-1">
+        <div class="p-5 h-full flex flex-col justify-between">
             <div class="flex items-start justify-between">
                 <div class="flex-1">
                     <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Pengeluaran Bulan Ini</p>
@@ -349,24 +417,25 @@
                     </svg>
                 </div>
             </div>
-        </div>
-        <div class="bg-slate-50 px-5 py-2.5 border-t border-slate-100">
-            @if($canViewPengeluaran && !$isKepalaSekolahRole)
-            <a href="{{ route('pengeluaran.index') }}" class="flex items-center justify-between text-xs font-semibold text-slate-600 hover:text-rose-600 transition-colors group">
-                <span>Lihat Detail</span>
-                <svg class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
-                </svg>
-            </a>
-            @else
-            <span class="text-xs font-semibold text-slate-500">Aksi keuangan dibatasi</span>
-            @endif
+
+            <div class="mt-4 pt-4 border-t border-slate-100">
+                @if($canViewPengeluaran && !$isKepalaSekolahRole)
+                <a href="{{ route('pengeluaran.index') }}" class="flex items-center justify-between text-xs font-semibold text-slate-600 hover:text-rose-600 transition-colors group">
+                    <span>Lihat Detail</span>
+                    <svg class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                    </svg>
+                </a>
+                @else
+                <span class="text-xs font-semibold text-slate-500">Aksi keuangan dibatasi</span>
+                @endif
+            </div>
         </div>
     </div>
 </div>
 
 <!-- Charts Row -->
-<div class="grid grid-cols-1 gap-5 mb-6 lg:grid-cols-3">
+<div class="dash-chart-grid grid grid-cols-1 gap-5 mb-6 lg:grid-cols-3">
     <!-- Cashflow Chart -->
     <div class="lg:col-span-2 bg-white rounded-2xl shadow-lg shadow-slate-200 p-6">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-5 gap-3">
@@ -374,7 +443,7 @@
                 <h3 class="text-lg font-bold bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">Cashflow Overview</h3>
                 <p class="text-xs text-slate-500 mt-1">Pemasukan vs Pengeluaran</p>
             </div>
-            <form method="GET" action="{{ route('dashboard') }}" class="flex flex-col sm:flex-row gap-2" id="chartFilterForm">
+            <form method="GET" action="{{ route('dashboard') }}" class="dash-chart-filter flex flex-col sm:flex-row gap-2" id="chartFilterForm">
                 <input type="date" 
                        name="chart_start_date" 
                        value="{{ request('chart_start_date', now()->subMonths(5)->startOfMonth()->format('Y-m-d')) }}"
@@ -416,7 +485,7 @@
 </div>
 
 <!-- Recent Transactions & Quick Stats -->
-<div class="grid grid-cols-1 gap-5 lg:grid-cols-3">
+<div class="dash-bottom-grid grid grid-cols-1 gap-5 lg:grid-cols-3">
     <!-- Recent Transactions -->
     <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200">
         <div class="px-5 py-3 border-b border-gray-200">
@@ -496,7 +565,7 @@
     <!-- Quick Stats & Actions -->
     <div class="space-y-5">
         <!-- Quick Actions -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+        <div class="dash-quick-actions bg-white rounded-xl shadow-sm border border-gray-200 p-5">
             <h3 class="text-base font-semibold text-gray-900 mb-3">Quick Actions</h3>
             <div class="space-y-2">
                 @if(($dashboardRole ?? 'default') === 'bendahara')

@@ -26,8 +26,12 @@
         </div>
     @endif
 
-    <form method="POST" action="{{ route('password.reset.direct') }}" class="space-y-6">
+    <form method="POST" action="{{ route('password.reset.direct') }}" class="space-y-6" autocomplete="off">
         @csrf
+
+        <!-- Fake inputs to disable autofill -->
+        <input type="email" style="display:none" name="fakeemailremembered" aria-hidden="true">
+        <input type="password" style="display:none" name="fakepasswordremembered" aria-hidden="true">
 
         <!-- Email Address -->
         <div>
@@ -44,7 +48,7 @@
                        value="{{ old('email') }}" 
                        required 
                        autofocus 
-                       autocomplete="off"
+                       autocomplete="nope"
                        placeholder="nama@email.com"
                        class="w-full pl-12 pr-4 py-3.5 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all duration-200 @error('email') border-red-500 @enderror">
             </div>
@@ -71,7 +75,7 @@
                        type="password" 
                        name="password" 
                        required
-                       autocomplete="off"
+                       autocomplete="new-password"
                        placeholder="Masukkan password baru"
                        class="w-full pl-12 pr-12 py-3.5 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all duration-200 @error('password') border-red-500 @enderror">
                 <button type="button" 
@@ -109,7 +113,7 @@
                        type="password" 
                        name="password_confirmation" 
                        required
-                       autocomplete="off"
+                       autocomplete="new-password"
                        placeholder="Konfirmasi password baru"
                        class="w-full pl-12 pr-12 py-3.5 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all duration-200">
                 <button type="button" 

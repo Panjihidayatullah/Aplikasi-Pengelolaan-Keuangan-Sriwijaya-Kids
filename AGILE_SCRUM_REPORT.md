@@ -1,5 +1,5 @@
 # Laporan Pengembangan Proyek: Metode Agile Scrum
-**Proyek:** Aplikasi Pengelolaan Keuangan Sriwijaya Kids
+**Proyek:** Aplikasi Pengelolaan Keuangan Educlass
 **Status:** Sprint Aktif
 
 Dokumen ini mencatat progres pengembangan aplikasi dengan mengikuti kerangka kerja **Agile Scrum** sebagaimana diilustrasikan dalam metodologi standar industri.

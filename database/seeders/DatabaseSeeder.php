@@ -14,38 +14,38 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // Create users first (needed for foreign keys) - only if they don't exist
-        if (!User::where('email', 'admin@sriwijayakidss.com')->exists()) {
+        if (!User::where('email', 'admin@educlass.com')->exists()) {
             User::factory()->create([
                 'name' => 'Admin User',
-                'email' => 'admin@sriwijayakidss.com',
+                'email' => 'admin@educlass.com',
             ]);
         }
 
-        if (!User::where('email', 'budi.santoso@sriwijayakidss.com')->exists()) {
+        if (!User::where('email', 'budi.santoso@educlass.com')->exists()) {
             User::factory()->create([
                 'name' => 'Budi Santoso',
-                'email' => 'budi.santoso@sriwijayakidss.com',
+                'email' => 'budi.santoso@educlass.com',
             ]);
         }
 
-        if (!User::where('email', 'siti.nurhaliza@sriwijayakidss.com')->exists()) {
+        if (!User::where('email', 'siti.nurhaliza@educlass.com')->exists()) {
             User::factory()->create([
                 'name' => 'Siti Nurhaliza',
-                'email' => 'siti.nurhaliza@sriwijayakidss.com',
+                'email' => 'siti.nurhaliza@educlass.com',
             ]);
         }
 
-        if (!User::where('email', 'ahmad.fauzi@sriwijayakidss.com')->exists()) {
+        if (!User::where('email', 'ahmad.fauzi@educlass.com')->exists()) {
             User::factory()->create([
                 'name' => 'Ahmad Fauzi',
-                'email' => 'ahmad.fauzi@sriwijayakidss.com',
+                'email' => 'ahmad.fauzi@educlass.com',
             ]);
         }
 
-        if (!User::where('email', 'dewi.lestari@sriwijayakidss.com')->exists()) {
+        if (!User::where('email', 'dewi.lestari@educlass.com')->exists()) {
             User::factory()->create([
                 'name' => 'Dewi Lestari',
-                'email' => 'dewi.lestari@sriwijayakidss.com',
+                'email' => 'dewi.lestari@educlass.com',
             ]);
         }
 

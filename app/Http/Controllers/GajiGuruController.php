@@ -98,6 +98,14 @@ class GajiGuruController extends Controller
             );
         }
 
+        $totalPemasukan = \App\Models\Pembayaran::where('status', 'Lunas')->sum('jumlah');
+        $totalPengeluaran = \App\Models\Pengeluaran::whereIn('status', ['Disetujui', 'Pending'])->sum('jumlah');
+        $saldoTersedia = $totalPemasukan - $totalPengeluaran;
+
+        if ($validated['jumlah'] > $saldoTersedia) {
+            return back()->withInput()->with('error', 'Saldo tidak cukup untuk membayar gaji ini. (Saldo saat ini: Rp ' . number_format($saldoTersedia, 0, ',', '.') . ')');
+        }
+
         // Cari jenis pengeluaran Gaji Guru
         JenisPengeluaran::ensureKategoriInti();
         $jenisPengeluaran = JenisPengeluaran::query()
@@ -204,6 +212,14 @@ class GajiGuruController extends Controller
         $periode_bulan = (int)date('n');
         $periode_tahun = (int)date('Y');
         $tanggal_bayar = date('Y-m-d');
+
+        $totalPemasukan = \App\Models\Pembayaran::where('status', 'Lunas')->sum('jumlah');
+        $totalPengeluaran = \App\Models\Pengeluaran::whereIn('status', ['Disetujui', 'Pending'])->sum('jumlah');
+        $saldoTersedia = $totalPemasukan - $totalPengeluaran;
+
+        if ($validated['nominal'] > $saldoTersedia) {
+            return back()->withInput()->with('error', 'Saldo tidak cukup untuk membayar gaji secara otomatis. (Saldo saat ini: Rp ' . number_format($saldoTersedia, 0, ',', '.') . ')');
+        }
 
         DB::transaction(function() use ($validated, $request, $periode_bulan, $periode_tahun, $tanggal_bayar) {
             // 1. Simpan Gaji Default (Daftar Gaji)

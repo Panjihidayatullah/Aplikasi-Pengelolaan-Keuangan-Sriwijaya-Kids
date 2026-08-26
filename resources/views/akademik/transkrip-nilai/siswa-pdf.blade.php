@@ -87,7 +87,7 @@
 </head>
 <body>
     <div class="header">
-        <h1>{{ config('finance.school.name', 'Sriwijaya Kids') }}</h1>
+        <h1>{{ config('finance.school.name', 'Educlass') }}</h1>
         <p>Laporan Transkrip Nilai Siswa</p>
         <p>Nomor Dokumen: {{ $nomorDokumen }}</p>
     </div>

@@ -212,7 +212,7 @@
 
     <div class="page">
         <div class="watermark">
-            <img src="{{ asset(config('finance.school.logo', 'images/Logo_SriwijayaKids.png')) }}" alt="Logo">
+            <img src="{{ asset(config('finance.school.logo', 'images/educlass-logo.svg')) }}" alt="Logo">
         </div>
 
         <div class="content">
@@ -224,7 +224,7 @@
                     <tr>
                         <td>Satuan Pendidikan</td>
                         <td>:</td>
-                        <td>{{ strtoupper(config('finance.school.name', 'SRIWIJAYA KIDS')) }}</td>
+                        <td>{{ strtoupper(config('finance.school.name', 'EDUCLASS')) }}</td>
                     </tr>
                     <tr>
                         <td>Nama Lengkap</td>
@@ -287,7 +287,7 @@
                     <p>{{ now()->format('d M Y') }}</p>
                     <p>Kepala Sekolah</p>
                     <div class="signature-space"></div>
-                    <p class="signature-name">{{ strtoupper(config('finance.school.name', 'Sriwijaya Kids')) }}</p>
+                    <p class="signature-name">{{ strtoupper(config('finance.school.name', 'Educlass')) }}</p>
                 </div>
             </div>
         </div>

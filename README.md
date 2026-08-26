@@ -1,4 +1,4 @@
-# 🎓 Sistem Pengelolaan Keuangan Sekolah Kids Sriwijaya
+# 🎓 Sistem Pengelolaan Keuangan Educlass
 
 ![Laravel](https://img.shields.io/badge/Laravel-11.x-FF2D20?style=for-the-badge&logo=laravel)
 ![PHP](https://img.shields.io/badge/PHP-8.2+-777BB4?style=for-the-badge&logo=php)
@@ -7,7 +7,7 @@
 
 ## 📖 Deskripsi
 
-Sistem Pengelolaan Keuangan Sekolah Kids Sriwijaya adalah aplikasi web berbasis Laravel yang dirancang khusus untuk mengelola aspek keuangan sekolah secara efisien, transparan, dan profesional. Aplikasi ini menyediakan fitur lengkap untuk pengelolaan data siswa, pembayaran SPP dan biaya sekolah lainnya, pencatatan pengeluaran, manajemen aset, serta laporan keuangan yang komprehensif.
+Sistem Pengelolaan Keuangan Educlass adalah aplikasi web berbasis Laravel yang dirancang khusus untuk mengelola aspek keuangan sekolah secara efisien, transparan, dan profesional. Aplikasi ini menyediakan fitur lengkap untuk pengelolaan data siswa, pembayaran SPP dan biaya sekolah lainnya, pencatatan pengeluaran, manajemen aset, serta laporan keuangan yang komprehensif.
 
 Sistem ini dibangun dengan arsitektur **clean code**, mengikuti **best practices Laravel**, dan menggunakan **Service Layer Pattern** untuk memisahkan business logic dari controller, sehingga mudah di-maintain dan di-scale.
 
@@ -285,7 +285,7 @@ Menggunakan **Spatie Laravel Permission** dengan 3 role utama:
 
 ### 1. Clone atau Download Project
 ```bash
-cd "c:\laragon\www\Sriwijaya Kids"
+cd "c:\laragon\www\educlass"
 ```
 
 ### 2. Install Dependencies
@@ -308,14 +308,14 @@ Edit file `.env` dan sesuaikan:
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=sriwijaya_kids_finance
+DB_DATABASE=educlass_finance
 DB_USERNAME=root
 DB_PASSWORD=
 ```
 
 **Buat database di MySQL:**
 ```sql
-CREATE DATABASE sriwijaya_kids_finance;
+CREATE DATABASE educlass_finance;
 ```
 
 ### 5. Generate Application Key
@@ -371,21 +371,21 @@ Setelah seeder dijalankan, gunakan akun berikut:
 
 ### 👨‍💼 Admin
 ```
-Email: admin@sriwijayakids.com
+Email: admin@educlass.com
 Password: password
 ```
 **Access:** Full Control
 
 ### 💰 Bendahara
 ```
-Email: bendahara@sriwijayakids.com
+Email: bendahara@educlass.com
 Password: password
 ```
 **Access:** Finance Operations
 
 ### 🎓 Kepala Sekolah
 ```
-Email: kepsek@sriwijayakids.com
+Email: kepsek@educlass.com
 Password: password
 ```
 **Access:** View Only & Reports
@@ -397,7 +397,7 @@ Password: password
 ## 📁 Struktur Project
 
 ```
-Sriwijaya Kids/
+Educlass/
 ├── app/
 │   ├── Exports/
 │   │   ├── PemasukanExport.php       # Export pemasukan ke Excel
@@ -494,10 +494,10 @@ Edit `config/finance.php`:
 
 ```php
 'school' => [
-    'name' => 'Sekolah Kids Sriwijaya',
+    'name' => 'Educlass',
     'address' => 'Jl. Contoh No. 123, Palembang',
     'phone' => '(0711) 1234567',
-    'email' => 'info@sriwijayakids.com',
+    'email' => 'info@educlass.com',
     'logo' => 'images/logo.png', // Place logo in public/images/
 ],
 
@@ -788,9 +788,9 @@ Kontribusi sangat diterima! Silakan:
 
 Jika ada pertanyaan atau butuh bantuan:
 
-- **Email:** admin@sriwijayakids.com
+- **Email:** admin@educlass.com
 - **Phone:** (0711) 1234567
-- **Website:** https://sriwijayakids.com
+- **Website:** https://educlass.com
 
 ---
 
@@ -820,9 +820,9 @@ Anda bebas untuk:
 
 ## 👨‍💻 Author
 
-**Sistem Pengelolaan Keuangan Sekolah Kids Sriwijaya**
+**Sistem Pengelolaan Keuangan Educlass**
 
-Dikembangkan dengan ❤️ untuk Sekolah Kids Sriwijaya
+Dikembangkan dengan ❤️ untuk Educlass
 
 **Version:** 1.0.0  
 **Last Updated:** February 27, 2026

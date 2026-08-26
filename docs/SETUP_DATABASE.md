@@ -57,12 +57,12 @@ Harus muncul: `pdo_pgsql` dan `pgsql`
 1. Buka pgAdmin (biasanya include dengan PostgreSQL)
 2. Login dengan password yang dibuat saat install
 3. Klik kanan **Databases** → **Create** → **Database**
-4. Nama: `sriwijaya_kidss` → Save
+4. Nama: `educlass` → Save
 
 **Via Command Line:**
 ```bash
 psql -U postgres
-CREATE DATABASE sriwijaya_kidss;
+CREATE DATABASE educlass;
 \q
 ```
 
@@ -72,7 +72,7 @@ CREATE DATABASE sriwijaya_kidss;
 DB_CONNECTION=pgsql
 DB_HOST=127.0.0.1
 DB_PORT=5432
-DB_DATABASE=sriwijaya_kidss
+DB_DATABASE=educlass
 DB_USERNAME=postgres
 DB_PASSWORD=your_password
 DB_SSLMODE=prefer

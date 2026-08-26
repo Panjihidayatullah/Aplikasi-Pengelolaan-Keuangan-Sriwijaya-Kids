@@ -141,7 +141,7 @@ npm run build
 ## 📂 Struktur File Sekarang
 
 ```
-sriwijaya_kidss/
+educlass/
 ├── app/
 │   ├── Http/
 │   │   ├── Controllers/

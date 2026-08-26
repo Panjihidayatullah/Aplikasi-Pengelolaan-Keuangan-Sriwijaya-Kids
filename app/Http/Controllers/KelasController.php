@@ -54,9 +54,9 @@ class KelasController extends Controller
      */
     public function create()
     {
-        $occupiedTingkat = $this->getOccupiedTingkat();
+        $kelasPerTingkat = $this->getKelasPerTingkat();
 
-        return view('kelas.create', compact('occupiedTingkat'));
+        return view('kelas.create', compact('kelasPerTingkat'));
     }
 
     /**
@@ -71,12 +71,9 @@ class KelasController extends Controller
                 'integer',
                 'min:1',
                 'max:12',
-                Rule::unique('kelas', 'tingkat')->whereNull('deleted_at'),
             ],
             'wali_kelas' => 'nullable|string|max:100',
             'is_tingkat_akhir' => 'nullable|boolean',
-        ], [
-            'tingkat.unique' => 'Tingkat ini sudah dipakai oleh kelas lain. Hapus kelas pada tingkat tersebut terlebih dahulu jika ingin digunakan.',
         ]);
 
         $payload = [
@@ -277,9 +274,9 @@ class KelasController extends Controller
     public function edit(string $id)
     {
         $kelas = Kelas::findOrFail($id);
-        $occupiedTingkat = $this->getOccupiedTingkat($kelas->id);
+        $kelasPerTingkat = $this->getKelasPerTingkat($kelas->id);
 
-        return view('kelas.edit', compact('kelas', 'occupiedTingkat'));
+        return view('kelas.edit', compact('kelas', 'kelasPerTingkat'));
     }
 
     /**
@@ -296,14 +293,9 @@ class KelasController extends Controller
                 'integer',
                 'min:1',
                 'max:12',
-                Rule::unique('kelas', 'tingkat')
-                    ->whereNull('deleted_at')
-                    ->ignore($kelas->id),
             ],
             'wali_kelas' => 'nullable|string|max:100',
             'is_tingkat_akhir' => 'nullable|boolean',
-        ], [
-            'tingkat.unique' => 'Tingkat ini sudah dipakai oleh kelas lain. Hapus kelas pada tingkat tersebut terlebih dahulu jika ingin digunakan.',
         ]);
 
         $payload = [
@@ -346,10 +338,10 @@ class KelasController extends Controller
         }
     }
 
-    private function getOccupiedTingkat(?int $exceptKelasId = null)
+    private function getKelasPerTingkat(?int $exceptKelasId = null)
     {
         $query = Kelas::query()
-            ->select('tingkat')
+            ->select('id', 'nama_kelas', 'tingkat')
             ->whereNotNull('tingkat')
             ->where('tingkat', '>', 0);
 
@@ -358,10 +350,10 @@ class KelasController extends Controller
         }
 
         return $query
-            ->pluck('tingkat')
-            ->map(fn($item) => (int) $item)
-            ->filter(fn($item) => $item > 0)
-            ->unique()
-            ->values();
+            ->orderByTingkat()
+            ->orderBy('nama_kelas')
+            ->get()
+            ->groupBy(fn ($item) => (int) $item->tingkat)
+            ->map(fn ($items) => $items->pluck('nama_kelas')->values());
     }
 }

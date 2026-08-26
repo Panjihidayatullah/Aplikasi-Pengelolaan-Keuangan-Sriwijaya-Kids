@@ -58,14 +58,11 @@
                            max="12"
                            step="1"
                            inputmode="numeric"
-                           data-occupied-levels='@json(($occupiedTingkat ?? collect())->values())'
+                              data-kelas-per-tingkat='@json($kelasPerTingkat ?? new stdClass())'
                            placeholder="Contoh: 1"
                            class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all duration-200 bg-white @error('tingkat') border-red-500 @enderror">
-                    <p class="mt-2 text-xs text-slate-500">Tingkat harus unik. Jika tingkat sudah dipakai, Anda harus menghapus kelas pada tingkat tersebut terlebih dahulu.</p>
-                    @if(($occupiedTingkat ?? collect())->isNotEmpty())
-                    <p class="mt-1 text-xs text-amber-700">Tingkat terpakai saat ini: {{ ($occupiedTingkat ?? collect())->join(', ') }}</p>
-                    @endif
-                    <p id="tingkat-warning" class="mt-1 text-xs text-red-600 hidden"></p>
+                    <p class="mt-2 text-xs text-slate-500">Satu tingkat dapat memiliki beberapa kelas (misalnya: Kelas 1A, 1B, 1C).</p>
+                          <p id="tingkat-keterangan" class="mt-1 text-xs text-amber-700 hidden"></p>
                     @error('tingkat')
                         <p class="mt-2 text-sm text-red-600 flex items-center">
                             <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
@@ -132,29 +129,38 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const tingkatInput = document.getElementById('tingkat');
-        const warning = document.getElementById('tingkat-warning');
+        const keterangan = document.getElementById('tingkat-keterangan');
         if (!tingkatInput) return;
 
-        const occupied = JSON.parse(tingkatInput.dataset.occupiedLevels || '[]')
-            .map((item) => Number(item))
-            .filter((item) => Number.isInteger(item) && item > 0);
+        const kelasPerTingkat = JSON.parse(tingkatInput.dataset.kelasPerTingkat || '{}');
 
         const validateTingkat = () => {
             const value = Number(tingkatInput.value);
-            const duplicated = Number.isInteger(value) && occupied.includes(value);
+            const invalid = tingkatInput.value !== '' && (!Number.isInteger(value) || value < 1 || value > 12);
 
-            if (duplicated) {
-                tingkatInput.setCustomValidity('Tingkat sudah dipakai kelas lain.');
-                if (warning) {
-                    warning.textContent = `Tingkat ${value} sudah dipakai kelas lain.`;
-                    warning.classList.remove('hidden');
-                }
+            if (invalid) {
+                tingkatInput.setCustomValidity('Tingkat harus berupa angka 1 sampai 12.');
             } else {
                 tingkatInput.setCustomValidity('');
-                if (warning) {
-                    warning.textContent = '';
-                    warning.classList.add('hidden');
-                }
+            }
+
+            if (!keterangan) {
+                return;
+            }
+
+            if (!Number.isInteger(value) || value < 1 || value > 12 || tingkatInput.value === '') {
+                keterangan.textContent = '';
+                keterangan.classList.add('hidden');
+                return;
+            }
+
+            const kelasList = kelasPerTingkat[String(value)] || [];
+            if (kelasList.length > 0) {
+                keterangan.textContent = `Kelas yang sudah ada untuk tingkat ${value}: ${kelasList.join(', ')}`;
+                keterangan.classList.remove('hidden');
+            } else {
+                keterangan.textContent = `Belum ada kelas untuk tingkat ${value}.`;
+                keterangan.classList.remove('hidden');
             }
         };
 

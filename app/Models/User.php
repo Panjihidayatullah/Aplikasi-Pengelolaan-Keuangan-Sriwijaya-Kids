@@ -24,6 +24,8 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'is_approved',
+        'keterangan_registrasi',
     ];
 
     /**

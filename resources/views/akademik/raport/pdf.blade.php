@@ -77,7 +77,7 @@
 
 {{-- ── Page Header ── --}}
 <div class="page-header">
-    <div class="school-name">{{ config('app.name', 'Homeschooling Sriwijaya Kids') }}</div>
+    <div class="school-name">{{ config('app.name', 'Educlass') }}</div>
     <div class="doc-title">Raport Akademik Siswa</div>
 </div>
 

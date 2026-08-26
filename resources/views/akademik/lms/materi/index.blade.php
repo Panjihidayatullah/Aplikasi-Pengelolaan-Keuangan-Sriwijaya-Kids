@@ -35,9 +35,20 @@
                 <p class="text-gray-600 mt-1">Upload dan akses materi PDF, video, dan PPT</p>
             </div>
         </div>
-        @if(is_admin() || auth()->user()->hasRole('Guru'))
-        <a href="{{ route('akademik.lms.materi.create', ['pertemuan_tanggal' => request('pertemuan_tanggal'), 'semester_id' => request('semester_id'), 'tahun_ajaran_id' => request('tahun_ajaran_id'), 'kelas_id' => request('kelas_id')]) }}" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition">Upload Materi</a>
-        @endif
+        <div class="flex items-center gap-3">
+            @if(request('back_url'))
+            <a href="{{ urldecode(request('back_url')) }}"
+               class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 transition">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                </svg>
+                Kembali ke LMS Pertemuan
+            </a>
+            @endif
+            @if(is_admin() || auth()->user()->hasRole('Guru'))
+            <a href="{{ route('akademik.lms.materi.create', ['pertemuan_tanggal' => request('pertemuan_tanggal'), 'semester_id' => request('semester_id'), 'tahun_ajaran_id' => request('tahun_ajaran_id'), 'kelas_id' => request('kelas_id')]) }}" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition">Upload Materi</a>
+            @endif
+        </div>
     </div>
 
 
@@ -50,7 +61,7 @@
     </div>
     @endif
 
-    <form method="GET" class="bg-white rounded-lg shadow p-4 mb-6 space-y-3">
+    <form method="GET" class="bg-white rounded-lg shadow p-4 mb-6">
         @if(request()->filled('semester_id'))
         <input type="hidden" name="semester_id" value="{{ request('semester_id') }}">
         @endif
@@ -58,41 +69,30 @@
         <input type="hidden" name="tahun_ajaran_id" value="{{ request('tahun_ajaran_id') }}">
         @endif
 
-        @if(!$isSiswaScope)
-        <div class="grid grid-cols-1 lg:grid-cols-[2fr_auto] gap-3 items-end">
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1">Pilih Kelas Terlebih Dahulu</label>
-                <select name="kelas_id" class="w-full px-3 py-2 border border-gray-300 rounded-lg" onchange="this.form.submit()">
-                    <option value="">Pilih Kelas</option>
+        <div class="w-full flex flex-wrap xl:flex-nowrap items-end gap-3">
+            <div class="flex-1 min-w-[260px]">
+                <input type="text" name="q" value="{{ request('q') }}" placeholder="Cari judul materi..." class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+            </div>
+
+            @if(!$isSiswaScope)
+            <div class="flex-1 min-w-[220px]">
+                <select name="kelas_id" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                    <option value="">Semua Kelas</option>
                     @foreach($kelases as $kelas)
                     <option value="{{ $kelas->id }}" @selected((string) request('kelas_id') === (string) $kelas->id)>{{ $kelas->nama }}</option>
                     @endforeach
                 </select>
             </div>
-            <button class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold">Terapkan Kelas</button>
-        </div>
-        @else
-            @if(!empty($selectedKelasId))
-            <input type="hidden" name="kelas_id" value="{{ $selectedKelasId }}">
-            <div class="rounded-lg border border-green-100 bg-green-50 px-3 py-2 text-sm text-green-900">
-                Kelas materi otomatis disesuaikan dengan kelas Anda: <span class="font-semibold">{{ optional($kelases->firstWhere('id', (int) $selectedKelasId))->nama ?? '-' }}</span>.
-            </div>
+            @else
+                @if(!empty($selectedKelasId))
+                <input type="hidden" name="kelas_id" value="{{ $selectedKelasId }}">
+                @endif
+                <div class="flex-1 min-w-[220px] px-3 py-2 border border-green-200 rounded-lg bg-green-50 text-sm text-green-800">
+                    Kelas otomatis: <span class="font-semibold">{{ optional($kelases->firstWhere('id', (int) $selectedKelasId))->nama ?? 'Belum terhubung' }}</span>
+                </div>
             @endif
-        @endif
 
-        @if(!empty($selectedKelasId))
-        <div class="rounded-lg border border-blue-100 bg-blue-50 px-3 py-2 text-sm text-blue-900">
-            Filter lanjutan aktif untuk kelas <span class="font-semibold">{{ optional($kelases->firstWhere('id', (int) $selectedKelasId))->nama ?? '-' }}</span>.
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-5 gap-3 items-end">
-            <div class="lg:col-span-2">
-                <label class="block text-sm font-semibold text-gray-700 mb-1">Cari Materi</label>
-                <input type="text" name="q" value="{{ request('q') }}" placeholder="Cari judul materi..." class="w-full px-3 py-2 border border-gray-300 rounded-lg">
-            </div>
-
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1">Mata Pelajaran</label>
+            <div class="flex-1 min-w-[220px]">
                 <select name="mata_pelajaran_id" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
                     <option value="">Semua Mapel</option>
                     @foreach($mataPelajarans as $mp)
@@ -101,21 +101,19 @@
                 </select>
             </div>
 
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1">Tanggal Pertemuan</label>
+            <div class="flex-1 min-w-[220px]">
+                @if(request()->filled('pertemuan_tanggal') && request()->filled('back_url'))
+                <input type="hidden" name="pertemuan_tanggal" value="{{ request('pertemuan_tanggal') }}">
+                <input type="date" disabled value="{{ request('pertemuan_tanggal') }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed">
+                @else
                 <input type="date" name="pertemuan_tanggal" value="{{ request('pertemuan_tanggal') }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                @endif
             </div>
 
-            <div class="flex items-center gap-2">
-                <button class="w-full px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg">Filter Lanjutan</button>
-                <a href="{{ route('akademik.lms.materi.index', array_filter(['kelas_id' => $isSiswaScope ? $selectedKelasId : request('kelas_id'), 'semester_id' => request('semester_id'), 'tahun_ajaran_id' => request('tahun_ajaran_id')], fn ($value) => $value !== null && $value !== '')) }}" class="px-4 py-2 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg font-semibold whitespace-nowrap">Reset</a>
+            <div class="min-w-[140px] w-full sm:w-auto">
+                <button class="w-full px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg">Filter</button>
             </div>
         </div>
-        @else
-        <div class="rounded-lg border border-dashed border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-800">
-            {{ $isSiswaScope ? 'Kelas siswa Anda belum terhubung. Silakan hubungi admin.' : 'Pilih kelas terlebih dahulu untuk menampilkan filter lanjutan dan daftar materi.' }}
-        </div>
-        @endif
     </form>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">

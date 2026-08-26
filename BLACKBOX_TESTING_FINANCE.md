@@ -1,7 +1,7 @@
 # Laporan Pengujian Black Box - Sistem Pengelolaan Keuangan
-## Sriwijaya Kids Financial Management System (Updated)
+## Educlass Financial Management System (Updated)
 
-Dokumen ini berisi detail pengujian Black Box yang telah disesuaikan dengan implementasi sistem keuangan dan aset pada aplikasi Sriwijaya Kids.
+Dokumen ini berisi detail pengujian Black Box yang telah disesuaikan dengan implementasi sistem keuangan dan aset pada aplikasi Educlass.
 
 ### 1. Halaman Pembayaran (Siswa)
 | ID | Skenario Pengujian | Input | Hasil yang Diharapkan | Status |
@@ -55,4 +55,4 @@ Dokumen ini berisi detail pengujian Black Box yang telah disesuaikan dengan impl
 
 ---
 **Kesimpulan Akhir:**
-Sistem Pengelolaan Keuangan Sriwijaya Kids telah diuji melalui metode Black Box dan terbukti mampu menangani seluruh alur kerja finansial (Pemasukan, Pengeluaran, Gaji, Aset, dan Pelaporan) dengan validasi data yang ketat dan integrasi notifikasi antar role.
+Sistem Pengelolaan Keuangan Educlass telah diuji melalui metode Black Box dan terbukti mampu menangani seluruh alur kerja finansial (Pemasukan, Pengeluaran, Gaji, Aset, dan Pelaporan) dengan validasi data yang ketat dan integrasi notifikasi antar role.

@@ -101,7 +101,12 @@
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1">Tanggal Pertemuan</label>
-                    <input type="date" name="tanggal_pertemuan" value="{{ old('tanggal_pertemuan', $prefillPertemuanTanggal) }}" class="w-full px-4 py-3 border border-gray-300 rounded-lg text-base">
+                    @if(!empty($prefillPertemuanTanggal))
+                    <input type="hidden" name="tanggal_pertemuan" value="{{ old('tanggal_pertemuan', $prefillPertemuanTanggal) }}">
+                    <input type="date" disabled value="{{ old('tanggal_pertemuan', $prefillPertemuanTanggal) }}" class="w-full px-4 py-3 border border-gray-300 rounded-lg text-base bg-gray-100 cursor-not-allowed">
+                    @else
+                    <input type="date" name="tanggal_pertemuan" value="{{ old('tanggal_pertemuan') }}" class="w-full px-4 py-3 border border-gray-300 rounded-lg text-base">
+                    @endif
                 </div>
             </div>
 
